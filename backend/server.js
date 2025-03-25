@@ -1,3 +1,29 @@
-// Placeholders until proper inplementation please don't delete and please keep safe
-// Client ID: ARjrMdSPjUfimQVcSAWFcUXAxuSJw3zaOjAZS5hljEqJySrkTUIUnRppWpB2S6aHsOMahstq9XuCTYpY
-// Client secret: EFZORs7KzKjEZBTF-0TkW6Qcu8_0NQeBSaU0aI_LuniN0xVdGYsK8Kb8m98hV0W7_26YT69j5NElK7t6
+const express = require("express");
+const cors = require("cors");
+const Stripe = require("stripe");
+const { stripeSecretKey } = require("./config");
+
+const stripe = new Stripe(stripeSecretKey);
+const app = express();
+
+app.use(cors());
+app.use(express.json());
+
+app.post("/create-payment-intent", async (req, res) => {
+  try {
+    const { amount } = req.body; // Amount in cents (e.g., $10.00 = 1000)
+
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount,
+      currency: "cad",
+      payment_method_types: ["card"],
+    });
+
+    res.json({ clientSecret: paymentIntent.client_secret });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+const PORT = 3001;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
