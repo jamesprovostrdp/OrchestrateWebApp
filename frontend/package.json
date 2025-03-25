@@ -2,7 +2,10 @@
   "name": "frontend",
   "version": "0.1.0",
   "private": true,
+  "proxy": "http://localhost:3001",
   "dependencies": {
+    "@stripe/react-stripe-js": "^3.5.1",
+    "@stripe/stripe-js": "^6.1.0",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.2.0",
