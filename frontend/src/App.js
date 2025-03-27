@@ -63,7 +63,6 @@ function App() {
         events={events}
       />
 
-
       {showPopup && (
         <EventPopup
           selectedDate={selectedDate}
@@ -79,9 +78,5 @@ function App() {
     </div>
   );
 }
-
-
-
-
 
 export default App;
