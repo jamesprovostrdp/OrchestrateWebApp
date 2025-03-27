@@ -2,7 +2,12 @@
 const express = require("express");
 const cors = require("cors");
 const Stripe = require("stripe");
-const { stripeSecretKey } = require("./config");
+const { stripeSecretKey } = require("./config/environmentVars");
+const connectDB = require('./config/db');
+const userRouter = require('./routes/userRoutes');
+
+// Connect to Database
+connectDB();
 
 // Initializes the Stripe instance with the Secret Key
 const stripe = new Stripe(stripeSecretKey);
@@ -12,7 +17,14 @@ const app = express();
 app.use(cors()); // Allows cross-origin requests between the front-end and back-end
 app.use(express.json()); // Parses incoming JSON requests
 
+
+// Api routing for users
+app.use('/api/user/', userRouter);
+
+
+// POST for payment window
 app.post("/create-payment-intent", async (req, res) => {
+
   try {
     const { amount } = req.body; // Extracts the payment amount from the request body (in cents)
 
