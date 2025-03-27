@@ -4,7 +4,7 @@ import './css/App.css';
 import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
 import PaymentForm from './components/PaymentForm';
-import Calendar from './Calendar';
+import Calendar from './components/Calendar';
 import OwnerEventPopup from './OwnerEventPopup';
 import './bootstrap.min.css';
 
