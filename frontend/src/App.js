@@ -1,16 +1,14 @@
 // Imports for React, Stripe, and Components within the src folder
 import React, { useState } from 'react';
 import './css/App.css';
-import './App.css';
+import './bootstrap.min.css';
 import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
 import PaymentForm from './components/PaymentForm';
-import Calendar from './Calendar';
-import EventPopup from './EventPopup';
-import './bootstrap.min.css';
-
 import EventSignup from './components/EventSignup';
 import NotificationSystem from './components/NotificationSystem';
+import Calendar from './components/Calendar';
+import EventPopup from './components/EventPopup';
 
 // Used for Stripe implementation
 const stripePromise = loadStripe('pk_test_51R6da3R4C0NESzZKViVuNOnUVPxs3n71XZuijiIuTKCx5wFu7XXeJDKZN2pgrCN94LOMPb3XwkF90SB1aRr91IqH00cGulU19M'); // public key

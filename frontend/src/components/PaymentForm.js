@@ -46,13 +46,15 @@ const PaymentForm = () => {
         payment_method: paymentMethod.id,
       });
 
-      if (confirmError) {
+      if (confirmError) 
+      {
         // If there is a payment confirmation error, displays the error
         setError(confirmError.message);
       } else {
         // If the payment is successful, update the success message
-        if (paymentIntent.status === 'succeeded') {
-          setMessage("Payment Successful!");
+        if (paymentIntent.status === 'succeeded') 
+        {
+          setMessage(`Payment Successful! Payment ID: ${paymentIntent.id}`);
         }
       }
     }
