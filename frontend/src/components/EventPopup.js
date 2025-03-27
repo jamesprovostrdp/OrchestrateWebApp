@@ -44,12 +44,9 @@ export default function OwnerEventPopup({selectedDate, selectedEvent, onSave, on
                             <label for="exampleTextarea" class="form-label mt-4">Additional Notes</label>
                             <textarea className="form-control" id="exampleTextarea" rows="3"></textarea>
                             
-
                                 <input class="form-check-input" type="checkbox" value="Payment Required" id="flexCheckDefault"></input>
                                 <label class="form-check-label" htmlfor="flexCheckDefault">Default checkbox</label>
                                 
-
-                
                             <div className="mt-4">
                                 <button type="submit" className="btn btn-success me-2">Save</button>
                                 <button type="button" className="btn btn-secondary" onClick={onClose}>Cancel</button>
