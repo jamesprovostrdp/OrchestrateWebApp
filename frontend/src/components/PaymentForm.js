@@ -32,6 +32,7 @@ const PaymentForm = () => {
       setError(error.message);
     } else {
       // Send the payment method ID to the backend
+      // Fetches a response from the payment intent in server.js
       const response = await fetch("http://localhost:3001/create-payment-intent", {
         method: "POST",
         headers: { "Content-Type": "application/json" },

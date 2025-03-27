@@ -7,7 +7,6 @@ export default function OwnerEventPopup({selectedDate, selectedEvent, onSave, on
     const [location, setLocation] = useState('');
     const [paymentRequired, setPaymentRequired] = useState('');
 
-
     const handleSubmit = (e) => {
         e.preventDefault();
         const dateTime = `${selectedDate || selectedEvent.start.split('T')[0]}T${time}`;

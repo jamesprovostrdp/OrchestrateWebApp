@@ -64,7 +64,6 @@ function App() {
         events={events}
       />
 
-
       {showPopup && (
         <OwnerEventPopup
           selectedDate={selectedDate}
@@ -80,9 +79,5 @@ function App() {
     </div>
   );
 }
-
-
-
-
 
 export default App;
