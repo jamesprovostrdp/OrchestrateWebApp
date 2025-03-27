@@ -1,12 +1,11 @@
 // Imports for React, Stripe, and Components within the src folder
 import React, { useState } from 'react';
 import './css/App.css';
-import './App.css';
 import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
 import PaymentForm from './components/PaymentForm';
 import Calendar from './Calendar';
-import EventPopup from './EventPopup';
+import OwnerEventPopup from './OwnerEventPopup';
 import './bootstrap.min.css';
 
 import EventSignup from './components/EventSignup';
@@ -67,7 +66,7 @@ function App() {
 
 
       {showPopup && (
-        <EventPopup
+        <OwnerEventPopup
           selectedDate={selectedDate}
           selectedEvent={selectedEvent}
           onSave={handleSaveEvent}

@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 
-export default function EventPopup({selectedDate, selectedEvent, onSave, onClose}){
+export default function OwnerEventPopup({selectedDate, selectedEvent, onSave, onClose}){
 
     const [name, setName] = useState(selectedEvent?.title?.replace('Event - ', '') || '');
     const [time, setTime] = useState(selectedEvent?.start?.split('T')[1]?.slice(0, 5) || '');
@@ -13,7 +13,7 @@ export default function EventPopup({selectedDate, selectedEvent, onSave, onClose
         if (name.trim()) {
             onSave ({
                 title: ` - ${name}`,
-                start: dateTime
+                start: dateTime,
             });
             onClose();
         }
