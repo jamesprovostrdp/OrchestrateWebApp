@@ -30,10 +30,10 @@ app.post("/create-payment-intent", async (req, res) => {
 			payment_method_types: ["card"],
 		});
 
-		res.json({ clientSecret: paymentIntent.client_secret });
-	} catch (error) {
-		res.status(500).json({ error: error.message });
-	}
+    res.json({ clientSecret: paymentIntent.client_secret, paymentId: paymentIntent.id });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });
 
 const PORT = 3001;
