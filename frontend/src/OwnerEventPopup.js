@@ -6,7 +6,6 @@ export default function OwnerEventPopup({selectedDate, selectedEvent, onSave, on
     const [time, setTime] = useState(selectedEvent?.start?.split('T')[1]?.slice(0, 5) || '');
     const [location, setLocation] = useState('');
 
-
     const handleSubmit = (e) => {
         e.preventDefault();
         const dateTime = `${selectedDate || selectedEvent.start.split('T')[0]}T${time}`;
