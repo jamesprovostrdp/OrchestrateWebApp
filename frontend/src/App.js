@@ -5,7 +5,7 @@ import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
 import PaymentForm from './components/PaymentForm';
 import Calendar from './components/Calendar';
-import OwnerEventPopup from './OwnerEventPopup';
+import EventPopup from './EventPopup';
 import './css/bootstrap.min.css';
 
 import EventSignup from './components/EventSignup';
@@ -66,7 +66,7 @@ function App() {
 
 
       {showPopup && (
-        <OwnerEventPopup
+        <EventPopup
           selectedDate={selectedDate}
           selectedEvent={selectedEvent}
           onSave={handleSaveEvent}
