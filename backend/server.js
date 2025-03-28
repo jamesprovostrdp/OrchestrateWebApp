@@ -4,6 +4,7 @@ const Stripe = require("stripe");
 const { stripeSecretKey } = require("./config/environmentVars");
 const connectDB = require('./config/db');
 const userRouter = require('./routes/userRoutes');
+const eventRouter = require('./routes/eventRoutes');
 
 // Connect to Database
 connectDB();
@@ -17,7 +18,7 @@ app.use(express.json());
 
 // Api routing for users
 app.use('/api/user/', userRouter);
-
+app.use('/api/event/', eventRouter);
 
 // POST for payment window
 app.post("/create-payment-intent", async (req, res) => {
