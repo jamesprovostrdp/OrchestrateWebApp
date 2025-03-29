@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 
 export default function OwnerEventPopup({selectedDate, selectedEvent, onSave, onClose}){
 
@@ -11,13 +11,31 @@ export default function OwnerEventPopup({selectedDate, selectedEvent, onSave, on
         e.preventDefault();
         const dateTime = `${selectedDate || selectedEvent.start.split('T')[0]}T${time}`;
         if (name.trim()) {
+            const displayTitle = `${paymentRequired ? ' $ ' : ''} ${name}`;
             onSave ({
-                title: ` - ${name}`,
+                title: displayTitle,
                 start: dateTime,
+                location,
+                paymentRequired,
             });
             onClose();
         }
     }
+
+    useEffect(() => {
+        if (selectedEvent) {
+          setName(selectedEvent.title?.replace('Event - ', '') || '');
+          setTime(selectedEvent.start?.split('T')[1]?.slice(0, 5) || '');
+          setLocation(selectedEvent.location || '');
+          setPaymentRequired(selectedEvent.paymentRequired || false);
+        } else {
+          setName('');
+          setTime('');
+          setLocation('');
+          setPaymentRequired(false);
+        }
+      }, [selectedEvent]);
+    
 
     return (
         <div className="modal-overlay d-flex align-items-center justify-content-center">
@@ -45,7 +63,10 @@ export default function OwnerEventPopup({selectedDate, selectedEvent, onSave, on
                             <textarea className="form-control" id="exampleTextarea" rows="3"></textarea>
                             
                                 <input class="form-check-input" type="checkbox" value="Payment Required" id="flexCheckDefault"></input>
-                                <label class="form-check-label" htmlfor="flexCheckDefault">Default checkbox</label>
+                                <label class="form-check-label" htmlfor="flexCheckDefault">Payment Required</label>
+
+                                <input type="number" class="form-control" aria-label="Amount" fdprocessedid="kx17k3" placeholder='$0.00'></input>
+
                                 
                             <div className="mt-4">
                                 <button type="submit" className="btn btn-success me-2">Save</button>

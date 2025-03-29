@@ -5,7 +5,7 @@ import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
 import PaymentForm from './components/PaymentForm';
 import Calendar from './components/Calendar';
-import EventPopup from './EventPopup';
+import EventPopup from './components/EventPopup';
 import './css/bootstrap.min.css';
 import EventSignup from './components/EventSignup';
 import NotificationSystem from './components/NotificationSystem';
@@ -37,6 +37,8 @@ function App() {
     setSelectedEvent({
       title: event.title,
       start: event.startStr,
+      location: event.extendedProps.location,
+      paymentRequired: event.extendedProps.paymentRequired
     });
     setShowPopup(true) // Shows the event popup with the event details
   }

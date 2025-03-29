@@ -4,15 +4,15 @@ import dayGridPlugin from '@fullcalendar/daygrid'
 import interactionPlugin from '@fullcalendar/interaction'
 
 // Calendar component that accepts onDateClick, handleEventClick, and events
-export default function Calendar({onDateClick, handleEventClick, events}) {
+export default function Calendar({onDateClick, onEventClick, events}) {
     return (
         <FullCalendar
         plugins={[dayGridPlugin, interactionPlugin]}
         initialView="dayGridMonth" // Sets the view to monthly with a day grid
-        dateClick={[onDateClick]}
+        dateClick={onDateClick}
         events={events} // Pass the events to display on the calendar
         eventContent={renderEventContent}
-        onEventClick={handleEventClick}
+        eventClick={onEventClick}
         />
     )
 }
