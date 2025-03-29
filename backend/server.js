@@ -5,6 +5,7 @@ const Stripe = require("stripe");
 const { stripeSecretKey } = require("./config/environmentVars");
 const connectDB = require('./config/db');
 const userRouter = require('./routes/userRoutes');
+const eventRouter = require('./routes/eventRoutes');
 
 // Connect to Database
 connectDB();
@@ -17,10 +18,9 @@ const app = express();
 app.use(cors()); // Allows cross-origin requests between the front-end and back-end
 app.use(express.json()); // Parses incoming JSON requests
 
-
-// Api routing for users
+// Api routing for users and events
 app.use('/api/user/', userRouter);
-
+app.use('/api/event/', eventRouter);
 
 // POST for payment window
 app.post("/create-payment-intent", async (req, res) => {
