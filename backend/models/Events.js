@@ -15,9 +15,9 @@ const eventSchema = new mongoose.Schema({
     end: { type: Date, required: true },
     title: { type: String, required: false },
     notes: { type: String, required: false },
-    payment_amount: { type: Double, required: true },
-    owner: { type: [mongoose.Types.ObjectId], required: true },
-    members: { type: [mongoose.Types.ObjectId], required: false }
+    payment_amount: { type: mongoose.Schema.Types.Decimal128, required: true, default: 0.00 },
+    owner: { type: [mongoose.Schema.Types.ObjectId], required: true },
+    members: { type: [mongoose.Schema.Types.ObjectId], required: false }
 });
 
 module.exports = mongoose.model('Event', eventSchema);

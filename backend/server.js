@@ -15,8 +15,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-
-// Api routing for users
+// Api routing for users and events
 app.use('/api/user/', userRouter);
 app.use('/api/event/', eventRouter);
 

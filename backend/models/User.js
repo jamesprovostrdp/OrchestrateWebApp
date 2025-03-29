@@ -11,8 +11,8 @@ const userSchema = new mongoose.Schema({
     email: { type: String, required: true, unique: true },
     username: { type: String, required: true },
     password: { type: String, required: true },
-    owned_events: { type: [mongoose.Types.ObjectId], required: false  },
-    joined_events: { type: [mongoose.Types.ObjectId], required: false  }
+    owned_events: { type: [mongoose.Schema.Types.ObjectId], required: false  },
+    joined_events: { type: [mongoose.Schema.Types.ObjectId], required: false  }
 });
 
 userSchema.pre('save', async function (next) {
