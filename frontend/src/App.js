@@ -7,7 +7,6 @@ import PaymentForm from './components/PaymentForm';
 import Calendar from './components/Calendar';
 import OwnerEventPopup from './OwnerEventPopup';
 import './css/bootstrap.min.css';
-
 import EventSignup from './components/EventSignup';
 import NotificationSystem from './components/NotificationSystem';
 
@@ -15,28 +14,31 @@ import NotificationSystem from './components/NotificationSystem';
 const stripePromise = loadStripe('pk_test_51R6da3R4C0NESzZKViVuNOnUVPxs3n71XZuijiIuTKCx5wFu7XXeJDKZN2pgrCN94LOMPb3XwkF90SB1aRr91IqH00cGulU19M'); // public key
 
 function App() {
-
+  // State for managing events, selected dates/events, and popups
   const [events, setEvents] = useState([]);
   const [selectedDate, setSelectedDate] = useState(null);
   const [showPopup, setShowPopup] = useState(false);
   const [selectedEvent, setSelectedEvent] =useState(null);
 
+  // Function to handle clicking on a date within the calendar
   const handleDateClick = (arg) => {
     setSelectedDate(arg.dateStr);
     setShowPopup(true);
   };
 
+  // Saves a new event to the events state and adds the event to the existing list
   const handleSaveEvent = (event) => {
     setEvents([...events, event]);
   };
 
+  // Function to handle clicking on an existing event in the calendar
   const handleEventClick = (arg) => {
     const event = arg.event;
     setSelectedEvent({
       title: event.title,
       start: event.startStr,
     });
-    setShowPopup(true)
+    setShowPopup(true) // Shows the event popup with the event details
   }
 
   // Function for obtaining and handling event signups
@@ -57,6 +59,8 @@ function App() {
       <Elements stripe={stripePromise}>
         <PaymentForm />
       </Elements>
+
+      {/* Calendar Component - Displays event schedule */}
       <h1>Schedule</h1>
       <Calendar
         onDateClick={handleDateClick}
@@ -64,25 +68,20 @@ function App() {
         events={events}
       />
 
-
+      {/* Event Popup - Shown when a user clicks on an event */}
       {showPopup && (
         <OwnerEventPopup
           selectedDate={selectedDate}
           selectedEvent={selectedEvent}
           onSave={handleSaveEvent}
           onClose={() => {
-            setShowPopup(false);
-            setSelectedEvent(null);
+            setShowPopup(false); // Hides the popup
+            setSelectedEvent(null); // Clears the selected event
           }}
         />
       )}
-
     </div>
   );
 }
 
-
-
-
-
-export default App;
+export default App; // Exports the App component to be used throughout the application
