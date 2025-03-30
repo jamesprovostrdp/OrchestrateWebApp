@@ -2,6 +2,7 @@ import React, { useState } from 'react'; // Import React
 import { useStripe, useElements, CardElement } from '@stripe/react-stripe-js'; // Import Stripe payment
 import '../css/PaymentForm.css';  // Import the form CSS file
 
+
 const PaymentForm = () => {
   // Get Stripe and Elements instances
   const stripe = useStripe();
