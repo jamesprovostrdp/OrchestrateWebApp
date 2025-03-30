@@ -19,6 +19,10 @@ function App() {
   const [selectedDate, setSelectedDate] = useState(null);
   const [showPopup, setShowPopup] = useState(false);
   const [selectedEvent, setSelectedEvent] =useState(null);
+  const [eventNotification, setEventNotification] = useState(true);
+  const [showNotifications, setShowNotifications] = useState(false);
+
+
 
   // Function to handle clicking on a date within the calendar
   const handleDateClick = (arg) => {
@@ -43,26 +47,78 @@ function App() {
     setShowPopup(true) // Shows the event popup with the event details
   }
 
-  // Function for obtaining and handling event signups
-  const handleSignup = (event) => {
-    setEvents([...events, event]);
-  };
+
 
   return (
     <div className="App">
-      {/* Event Signup Component Initialized */ }
-      {/* <EventSignup onSignup={handleSignup} /> */}
+     
+     <nav className="navbar navbar-expand-lg bg-primary" data-bs-theme="dark">
+  <div className="container-fluid d-flex align-items-center justify-content-between">
 
-      {/* Notifications Component Initialized */ }
+    <a className="navbar-brand text-white" href="#">
+      <h1 className="fs-3 mb-0">Orchestrate</h1>
+    </a>
+
+    {/* Right-side controls: notification + logout */}
+    <div className="d-flex align-items-center">
+      
+      {/* Notification Icon with Gold Dot */}
+      <div style={{ position: 'relative', marginRight: '15px' }}>
+        <img
+          src="notification.png"
+          alt="Notifications"
+          style={{ width: '40px', cursor: 'pointer' }}
+          onClick={() => {setEventNotification(false);
+            setShowNotifications(prev => !prev);
+          }}
+          />
+        
+        {eventNotification && (
+          <span
+            style={{
+              position: 'absolute',
+              top: '0px',
+              right: '0px',
+              width: '12px',
+              height: '12px',
+              borderRadius: '50%',
+              backgroundColor: 'gold',
+              boxShadow: '0 0 5px gold'
+            }}
+          />
+        )}
+      </div>
+
+
+  {showNotifications && (
+    <div
+      style={{
+        position: 'absolute',
+        top: '45px',
+        right: '0',
+        width: '300px',
+        backgroundColor: 'white',
+        border: '1px solid #ccc',
+        borderRadius: '8px',
+        boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
+        zIndex: 10,
+        padding: '10px',
+      }}
+    >
       <NotificationSystem events={events} />
+    </div>
+  )}
 
-   {/* Payment System and Payment Form */ }
-      {/* <h2>Complete Your Payment</h2>
-      <Elements stripe={stripePromise}>
-        <PaymentForm />
-      </Elements> */}
+      <button type="button" className="btn btn-secondary">
+        Log Out
+      </button>
 
-      {/* Calendar Component - Displays event schedule */}
+    </div>
+  </div>
+</nav>
+
+
+
       <h1>Schedule</h1>
       <Calendar
         onDateClick={handleDateClick}
@@ -85,5 +141,7 @@ function App() {
     </div>
   );
 }
+
+
 
 export default App; // Exports the App component to be used throughout the application
