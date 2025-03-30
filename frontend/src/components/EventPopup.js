@@ -1,11 +1,24 @@
 import React, {useState, useEffect} from 'react';
+import { Elements } from '@stripe/react-stripe-js';
+import { loadStripe } from '@stripe/stripe-js';
+import PaymentForm from './PaymentForm';
+
+const stripePromise = loadStripe('pk_test_51R6da3R4C0NESzZKViVuNOnUVPxs3n71XZuijiIuTKCx5wFu7XXeJDKZN2pgrCN94LOMPb3XwkF90SB1aRr91IqH00cGulU19M');
+
+
 
 export default function OwnerEventPopup({selectedDate, selectedEvent, onSave, onClose}){
 
     const [name, setName] = useState(selectedEvent?.title?.replace('Event - ', '') || '');
     const [time, setTime] = useState(selectedEvent?.start?.split('T')[1]?.slice(0, 5) || '');
     const [location, setLocation] = useState('');
-    const [paymentRequired, setPaymentRequired] = useState('');
+    const [paymentRequired, setPaymentRequired] = useState(false);
+    const [amount, setAmount] = useState('');
+    const [notes, setNotes] = useState('');
+    const [formReady, setFormReady] = useState(false);
+
+
+
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -17,6 +30,8 @@ export default function OwnerEventPopup({selectedDate, selectedEvent, onSave, on
                 start: dateTime,
                 location,
                 paymentRequired,
+                notes,
+                amount,
             });
             onClose();
         }
@@ -28,12 +43,17 @@ export default function OwnerEventPopup({selectedDate, selectedEvent, onSave, on
           setTime(selectedEvent.start?.split('T')[1]?.slice(0, 5) || '');
           setLocation(selectedEvent.location || '');
           setPaymentRequired(selectedEvent.paymentRequired || false);
+          setNotes(selectedEvent.notes || '');
+          setAmount(selectedEvent.amount || '');
         } else {
           setName('');
           setTime('');
           setLocation('');
           setPaymentRequired(false);
+          setNotes('');
+          setAmount('');
         }
+        setFormReady(true)
       }, [selectedEvent]);
     
 
@@ -59,15 +79,38 @@ export default function OwnerEventPopup({selectedDate, selectedEvent, onSave, on
                             onChange={(e) => setLocation(e.target.value)}
                             />
 
-                            <label for="exampleTextarea" class="form-label mt-4">Additional Notes</label>
-                            <textarea className="form-control" id="exampleTextarea" rows="3"></textarea>
+                            <label className="form-label">Additional Notes</label>
+                                <textarea
+                                    className="form-control"
+                                    rows="3"
+                                    value={notes}
+                                    onChange={(e) => setNotes(e.target.value)}
+                                ></textarea>
                             
-                                <input class="form-check-input" type="checkbox" value="Payment Required" id="flexCheckDefault"></input>
-                                <label class="form-check-label" htmlfor="flexCheckDefault">Payment Required</label>
+                            <input className="form-check-input" type="checkbox" id="flexCheckDefault" checked={paymentRequired} onChange={(e) => setPaymentRequired(e.target.checked)}/>
+                            <label className="form-check-label" htmlfor="flexCheckDefault">Payment Required</label>
 
-                                <input type="number" class="form-control" aria-label="Amount" fdprocessedid="kx17k3" placeholder='$0.00'></input>
+                            {paymentRequired && (
+                            <div className="mt-3">
+                                <label className="form-label">Payment Amount</label>
+                                <input
+                                type="number"
+                                className="form-control"
+                                placeholder="$0.00"
+                                value={amount}
+                                onChange={(e) => setAmount(e.target.value)}
+                                />
 
-                                
+                                <div className="mt-4">
+                                    <h5>Complete Payment</h5>
+                                    <Elements stripe={stripePromise}>
+                                        <PaymentForm />
+                                    </Elements>
+                                    </div>
+
+                            </div>
+                            )}
+                 
                             <div className="mt-4">
                                 <button type="submit" className="btn btn-success me-2">Save</button>
                                 <button type="button" className="btn btn-secondary" onClick={onClose}>Cancel</button>

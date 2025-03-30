@@ -51,16 +51,16 @@ function App() {
   return (
     <div className="App">
       {/* Event Signup Component Initialized */ }
-      <EventSignup onSignup={handleSignup} />
+      {/* <EventSignup onSignup={handleSignup} /> */}
 
       {/* Notifications Component Initialized */ }
       <NotificationSystem events={events} />
 
-      {/* Payment System and Payment Form */ }
-      <h2>Complete Your Payment</h2>
+   {/* Payment System and Payment Form */ }
+      {/* <h2>Complete Your Payment</h2>
       <Elements stripe={stripePromise}>
         <PaymentForm />
-      </Elements>
+      </Elements> */}
 
       {/* Calendar Component - Displays event schedule */}
       <h1>Schedule</h1>
