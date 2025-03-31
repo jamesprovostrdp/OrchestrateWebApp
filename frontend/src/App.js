@@ -5,10 +5,12 @@ import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
 import PaymentForm from './components/PaymentForm';
 import Calendar from './components/Calendar';
-import OwnerEventPopup from './OwnerEventPopup';
+import EventPopup from './components/EventPopup';
 import './css/bootstrap.min.css';
 import EventSignup from './components/EventSignup';
 import NotificationSystem from './components/NotificationSystem';
+import LoginPage from './components/LoginPage';
+import RegistrationPage from'./components/RegistrationPage';
 
 // Used for Stripe implementation
 const stripePromise = loadStripe('pk_test_51R6da3R4C0NESzZKViVuNOnUVPxs3n71XZuijiIuTKCx5wFu7XXeJDKZN2pgrCN94LOMPb3XwkF90SB1aRr91IqH00cGulU19M'); // public key
@@ -19,6 +21,24 @@ function App() {
   const [selectedDate, setSelectedDate] = useState(null);
   const [showPopup, setShowPopup] = useState(false);
   const [selectedEvent, setSelectedEvent] =useState(null);
+  const [eventNotification, setEventNotification] = useState(true);
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [loggedIn, setLoggedIn] = useState(false);
+  const [register, setRegister] = useState(false);
+
+  // Directs users to login page if they are not yet logedin or else calendar view
+  if (!loggedIn) {
+    if (register) {
+      return <RegistrationPage onBackToLogin={() => setRegister(false)} onLogin={() => setLoggedIn(true)} />;
+    } else {
+      return (
+        <LoginPage
+          onLogin={() => setLoggedIn(true)}
+          onRegister={() => setRegister(true)}
+        />
+      );
+    }
+  }
 
   // Function to handle clicking on a date within the calendar
   const handleDateClick = (arg) => {
@@ -27,50 +47,117 @@ function App() {
   };
 
   // Saves a new event to the events state and adds the event to the existing list
-  const handleSaveEvent = (event) => {
+  const handleSaveEvent = async (event) => {
+    const databaseSend = await fetch("http://localhost:3001/api/event/create/1", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ title: event.title, start: event.start, end: event.start, payment_amount: event.amount })
+    });
     setEvents([...events, event]);
   };
 
-  // Function to handle clicking on an existing event in the calendar
+  // Function to handle clicking on an existing event in the calendar, reload event information when selected
   const handleEventClick = (arg) => {
     const event = arg.event;
     setSelectedEvent({
       title: event.title,
       start: event.startStr,
+      location: event.extendedProps.location,
+      paymentRequired: event.extendedProps.paymentRequired,
+      notes: event.extendedProps.notes,
+      amount: event.extendedProps.amount
     });
     setShowPopup(true) // Shows the event popup with the event details
   }
 
-  // Function for obtaining and handling event signups
-  const handleSignup = (event) => {
-    setEvents([...events, event]);
-  };
+
 
   return (
     <div className="App">
-      {/* Event Signup Component Initialized */ }
-      <EventSignup onSignup={handleSignup} />
 
-      {/* Notifications Component Initialized */ }
+     {/* Start of Nav bar */}
+     <nav className="navbar navbar-expand-lg bg-primary" data-bs-theme="dark">
+  <div className="container-fluid d-flex align-items-center justify-content-between">
+
+    <a className="navbar-brand text-white" href="#">
+      <h1 className="fs-3 mb-0">Orchestrate</h1>
+    </a>
+
+
+    <div className="d-flex align-items-center">
+      
+
+{/* Notification Icon for event reminders */}
+      <div style={{ position: 'relative', marginRight: '15px' }}>
+        <img src="notification.png" alt="Notifications"
+          style={{ width: '40px', cursor: 'pointer' }}
+          onClick={() => {setEventNotification(false);
+            setShowNotifications(prev => !prev);
+          }}
+          />
+        
+        {/* Gold Dot to display active notification */}
+        {eventNotification && (
+          <span
+            style={{
+              position: 'absolute',
+              top: '0px',
+              right: '0px',
+              width: '12px',
+              height: '12px',
+              borderRadius: '50%',
+              backgroundColor: 'gold',
+              boxShadow: '0 0 5px gold'
+            }}
+          />
+        )}
+      </div>
+
+
+{/* Notification area where event reminders displays */}
+  {showNotifications && (
+    <div
+      style={{
+        position: 'absolute',
+        top: '45px',
+        right: '0',
+        width: '300px',
+        backgroundColor: 'white',
+        border: '1px solid #ccc',
+        borderRadius: '8px',
+        boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
+        zIndex: 10,
+        padding: '10px',
+      }}
+    >
       <NotificationSystem events={events} />
+    </div>
+  )}
 
-      {/* Payment System and Payment Form */ }
-      <h2>Complete Your Payment</h2>
-      <Elements stripe={stripePromise}>
-        <PaymentForm />
-      </Elements>
+{/* Logout Button, redirects back to login page */}
+      <button type="button" className="btn btn-secondary" onClick={() => setLoggedIn(false)}>Log Out</button>
 
-      {/* Calendar Component - Displays event schedule */}
-      <h1>Schedule</h1>
-      <Calendar
-        onDateClick={handleDateClick}
-        onEventClick={handleEventClick}
-        events={events}
-      />
+    </div>
+  </div>
+</nav>
+
+{/* End of nav bar */}
+
+{/* Calendar display and functionality with clicking on dates and events */}
+      <div style={{maxWidth: '90vw', overflowX: 'hidden', margin: '0 auto'}}>
+      <div style={{ minWidth: '700px' }}>
+        <h1>Schedule</h1>
+          <Calendar
+            onDateClick={handleDateClick}
+            onEventClick={handleEventClick}
+            events={events}
+          />
+          </div>
+      </div>
 
       {/* Event Popup - Shown when a user clicks on an event */}
       {showPopup && (
-        <OwnerEventPopup
+        <EventPopup
           selectedDate={selectedDate}
           selectedEvent={selectedEvent}
           onSave={handleSaveEvent}
@@ -83,5 +170,7 @@ function App() {
     </div>
   );
 }
+
+
 
 export default App; // Exports the App component to be used throughout the application

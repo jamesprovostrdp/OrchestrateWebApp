@@ -2,7 +2,8 @@ import React, { useState } from 'react'; // Import React
 import { useStripe, useElements, CardElement } from '@stripe/react-stripe-js'; // Import Stripe payment
 import '../css/PaymentForm.css';  // Import the form CSS file
 
-const PaymentForm = () => {
+
+const PaymentForm = ({payment}) => {
   // Get Stripe and Elements instances
   const stripe = useStripe();
   const elements = useElements();
@@ -36,7 +37,7 @@ const PaymentForm = () => {
       const response = await fetch("http://localhost:3001/create-payment-intent", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ amount: 1000, paymentMethodId: paymentMethod.id }), // Example: $10.00 in cents (1000)
+        body: JSON.stringify({ amount: payment, paymentMethodId: paymentMethod.id }), // Example: $10.00 in cents (1000)
       });
 
       // Parse the JSON response from the server
