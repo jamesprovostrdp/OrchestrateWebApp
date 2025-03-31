@@ -113,7 +113,7 @@ export default function OwnerEventPopup({selectedDate, selectedEvent, onSave, on
                                 <div className="mt-4">
                                     <h5>Complete Payment</h5>
                                     <Elements stripe={stripePromise}>
-                                        <PaymentForm />
+                                        <PaymentForm payment={amount} />
                                     </Elements>
                                     </div>
 

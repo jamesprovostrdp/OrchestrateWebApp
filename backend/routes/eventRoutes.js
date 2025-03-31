@@ -15,7 +15,7 @@ eventRouter.get('/owned/:id', protect, getOwnedEventsByUserID);
 eventRouter.get('/joined/:id', protect, getJoinedEventsByUserID);
 
 // POST: (protected) adds an event to the database
-eventRouter.post('/create/:id', protect, createEvent);
+eventRouter.post('/create/:id', createEvent);
 
 // PUT: (protected) joins user to given event id via an update to the database
 eventRouter.put('/join/:id', protect, joinEventByID);
