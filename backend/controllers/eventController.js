@@ -4,7 +4,7 @@ const Event = require('../models/Event');
 // Return an Event by ID in parameter
 const getEventByID = async (req, res) => {
     try {
-        const event = await Events.findById(req.params.id);
+        const event = await Event.findById(req.params.id);
 
         if (!event) return res.status(404).json({ message: "Event not found."});
         
@@ -42,13 +42,37 @@ const getJoinedEventsByUserID = async (req, res) => {
     }
 
     try {
-        const userObjectID = mongoose.Types.ObjectId(id);
+        const joinedEvents = await Event.find({ members: id });
 
-        const joinedEvents = await Event.find({ members: userObjectID });
-
-        if (!joinedEvents || joinedEvents.length <= 0) return res.status(404).json({ message: "Joined Events not found."});
+        if (!joinedEvents || joinedEvents.length <= 0) return res.status(404).json({ events: [], message: "Joined Events not found."});
         
         return res.status(200).json({ events: joinedEvents});
+    } catch (err) {
+        return res.status(500).json({ message: 'Error retrieving events', err });
+    }
+};
+
+const getAllEventsByUserID = async (req, res) => {
+    const { id } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(400).json({ error: 'Invalid ID format' });
+    }
+
+    try {
+        //const joinedEvents = await Event.find({ members: id });
+
+        const joinedEvents = [];
+
+        if (!joinedEvents || joinedEvents.length <= 0) joinedEvents = [];
+
+        const ownedEvents = await Event.find({ owner: id });
+
+        if (!ownedEvents || ownedEvents.length <= 0) ownedEvents = [];
+
+        const allEvents = joinedEvents.concat(ownedEvents);
+
+        return res.status(200).json({ events: allEvents});
     } catch (err) {
         return res.status(500).json({ message: 'Error retrieving events', err });
     }
@@ -57,10 +81,23 @@ const getJoinedEventsByUserID = async (req, res) => {
 // Create an event and grant ownership
 const createEvent = async (req, res) => {
     //const { id } = req.params;
-    const { title, start, end, payment_amount, id } = req.body;
+    const { title, start, end, payment_amount, id, location, notes } = req.body;
 
-    if (!title || !start || !end || !payment_amount || !id) {
+    if (!title || !start || !id) {
         return res.status(400).json({ error: 'Missing required fields' });
+    }
+
+    if (!payment_amount) {
+        payment_amount = "0.00";
+    }
+    if (!location) {
+        location = "";
+    }
+    if (!notes) {
+        notes = "";
+    }
+    if (!end) {
+        end = start;
     }
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -74,6 +111,8 @@ const createEvent = async (req, res) => {
                 title: title,
                 start: start,
                 end: end,
+                location: location,
+                notes: notes,
                 payment_amount: payment_amount,
                 owner: id 
             }
@@ -93,26 +132,22 @@ const joinEventByID = async (req, res) => {
     const { event_id } = req.body;
 
 
-    if (!mongoose.Types.ObjectId.isValid(id) || !!mongoose.Types.ObjectId.isValid(event_id)) {
+    if (!mongoose.Types.ObjectId.isValid(id) || !mongoose.Types.ObjectId.isValid(event_id)) {
         return res.status(400).json({ error: 'Invalid ID format' });
     }
 
     try {
-        const userObjectID = mongoose.Types.ObjectId(id);
-        const eventObjectID = mongoose.Types.ObjectId(event_id);
-
-        const event = await Event.findByIdAndUpdate(
-            eventObjectID,
-            { $addToSet: { members: userObjectID } },  // Add member if not already in the array
-            { new: true }  // Return the updated document
-          );
+        const event = await Event.updateOne(
+            { _id: event_id },
+            { $push: { members: id } }
+         );
 
         if (!event) return res.status(404).json({ message: "Event not joined as event doesn't exist."});
         
         return res.status(200).json(event);
     } catch (err) {
-        return res.status(500).json({ message: 'Error joining event', err });
+        return res.status(500).json({ message: 'Error joining event', err, info: { userID: id, eventID: event_id } });
     }
 };
 
-module.exports = { getEventByID, getOwnedEventsByUserID, getJoinedEventsByUserID, createEvent, joinEventByID };
+module.exports = { getEventByID, getOwnedEventsByUserID, getJoinedEventsByUserID, createEvent, joinEventByID, getAllEventsByUserID };

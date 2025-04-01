@@ -1,6 +1,6 @@
 const express = require('express');
 const protect = require('../middleware/authMiddleware');
-const { getEventByID, getOwnedEventsByUserID, getJoinedEventsByUserID, createEvent, joinEventByID } = require('../controllers/eventController');
+const { getEventByID, getOwnedEventsByUserID, getJoinedEventsByUserID, createEvent, joinEventByID, getAllEventsByUserID } = require('../controllers/eventController');
 const eventRouter = express.Router();
 
 // IN ALL CASES OTHER THAN get/:id ID is the user's id
@@ -13,6 +13,9 @@ eventRouter.get('/owned/:id', getOwnedEventsByUserID);
 
 // GET: (protected) returns event objects joined by given user id
 eventRouter.get('/joined/:id', getJoinedEventsByUserID);
+
+// GET: (protected) returns all event objects user id
+eventRouter.get('/all/:id', getAllEventsByUserID);
 
 // POST: (protected) adds an event to the database
 eventRouter.post('/create', createEvent);

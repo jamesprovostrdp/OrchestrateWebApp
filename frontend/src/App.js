@@ -11,7 +11,6 @@ import EventSignup from './components/EventSignup';
 import NotificationSystem from './components/NotificationSystem';
 import LoginPage from './components/LoginPage';
 import RegistrationPage from'./components/RegistrationPage';
-import mongoose from 'mongoose';
 
 // Used for Stripe implementation
 const stripePromise = loadStripe('pk_test_51R6da3R4C0NESzZKViVuNOnUVPxs3n71XZuijiIuTKCx5wFu7XXeJDKZN2pgrCN94LOMPb3XwkF90SB1aRr91IqH00cGulU19M'); // public key
@@ -30,11 +29,18 @@ function App() {
   const [userObjectID, setUserID] = useState("");
 
   const getEvents = async (userID) => {
+
     // Get Events from user ID
     const databaseSend = await fetch(`http://localhost:3001/api/event/owned/${userID}`);
 
     // Parse for events
-    const { events } = await databaseSend.json();
+    const eventsOwned = await databaseSend.json();
+
+    const databaseSendJ = await fetch(`http://localhost:3001/api/event/joined/${userID}`);
+
+    const eventsJoined = await databaseSendJ.json();
+
+    const events = eventsOwned.events.concat(eventsJoined.events);
 
     // Set events if results gained
     if (databaseSend.status === 200 || databaseSend.status === 404) {
@@ -104,12 +110,19 @@ function App() {
   const handleSaveEvent = async (event) => {
     // Send event to database
     const databaseSend = await fetch(`http://localhost:3001/api/event/create`, {
-
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title: event.title, start: event.start, end: event.start, payment_amount: event.amount, id: userObjectID })
+        body: JSON.stringify(
+          { 
+            title: event.title,
+            start: event.start, 
+            end: event.end, 
+            payment_amount: event.amount,
+            notes: event.notes,
+            location: event.location,
+            id: userObjectID 
+          })
     });
-    setEvents([...events, newEvent]);
 
     // Save event in events if successful
     if (databaseSend.status === 201) {
@@ -126,6 +139,7 @@ function App() {
               return [...prevEvents, event];
             }
           });
+
       getEvents(userObjectID);
       return;
     }
