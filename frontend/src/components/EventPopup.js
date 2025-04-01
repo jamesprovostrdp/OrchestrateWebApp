@@ -123,10 +123,28 @@ export default function OwnerEventPopup({selectedDate, selectedEvent, onSave, on
 
                             {paymentRequired && (
                             <div className="mt-3">
+
                             <label className="form-label">Payment Amount</label>
                             <input type="number" className="form-control" placeholder="$0.00" value={amount}
                             onChange={(e) => setAmount(e.target.value)}
                             />
+
+                                <label className="form-label">Payment Amount</label>
+                                <input
+                                type="number"
+                                className="form-control"
+                                placeholder="$0.00"
+                                value={amount}
+                                onChange={(e) => setAmount(e.target.value)}
+                                />
+
+                                <div className="mt-4">
+                                    <h5>Complete Payment</h5>
+                                    <Elements stripe={stripePromise}>
+                                        <PaymentForm payment={amount} />
+                                    </Elements>
+                                    </div>
+
 
                             </div>
                             )}
