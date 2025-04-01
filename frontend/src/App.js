@@ -46,9 +46,19 @@ function App() {
     setShowPopup(true);
   };
 
-  // Saves a new event to the events state and adds the event to the existing list
-  const handleSaveEvent = (event) => {
-    setEvents([...events, event]);
+  // Saves a new event or updates previous to the events state and adds the event to the existing list
+  const handleSaveEvent = (newEvent) => {
+    setEvents(prevEvents => {
+      const isEditing = selectedEvent !== null;
+  
+      if (isEditing) {
+        return prevEvents.map(ev => 
+          ev.start === selectedEvent.start ? { ...ev, ...newEvent } : ev
+        );
+      } else {
+        return [...prevEvents, newEvent];
+      }
+    });
   };
 
   // Function to handle clicking on an existing event in the calendar, reload event information when selected
@@ -156,6 +166,7 @@ function App() {
           selectedDate={selectedDate}
           selectedEvent={selectedEvent}
           onSave={handleSaveEvent}
+          // isOwner={userIsOwner}
           onClose={() => {
             setShowPopup(false); // Hides the popup
             setSelectedEvent(null); // Clears the selected event

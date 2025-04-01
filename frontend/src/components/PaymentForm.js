@@ -12,6 +12,7 @@ const PaymentForm = () => {
   // React useState for handling success messages
   const [message, setMessage] = useState('');
 
+
   // Handles form submission
   const handleSubmit = async (event) => {
     event.preventDefault(); 
@@ -76,4 +77,8 @@ const PaymentForm = () => {
   );
 };
 
+
+
 export default PaymentForm; // Exports the component to be used throughout the application
+
+
