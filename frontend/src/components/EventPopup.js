@@ -25,15 +25,16 @@ export default function OwnerEventPopup({selectedDate, selectedEvent, onSave, on
 
 
 
+
 // Combines date and time and stores the items on save
     const handleSubmit = (e) => {
         e.preventDefault();
-        const startTime = `${selectedDate || selectedEvent.start.split('T')[0]}T${startTime}`;
+        const dateTime = `${selectedDate || selectedEvent.start.split('T')[0]}T${startTime}`;
         if (name.trim()) {
             const displayTitle = `${paymentRequired ? ' $ ' : ''} ${name}`;
             onSave ({
                 title: displayTitle,
-                start: startTime,
+                start: dateTime,
                 end: endTime,
                 location,
                 paymentRequired,

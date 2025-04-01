@@ -52,7 +52,7 @@ function App() {
   
       // Filter events happening within the next 15 minutes
       const upcomingEvents = events.filter(event => {
-        const eventTime = new Date(event.date);
+        const eventTime = new Date(event.start);
         const timeDiff = (eventTime - now) / (60 * 1000);
         return timeDiff > 0 && timeDiff <= 15;
       });
@@ -60,7 +60,7 @@ function App() {
       // Add new notifications and remove past ones
       setNotifications(prev => {
         const newNotifications = upcomingEvents
-          .map(event => `Reminder: ${event.name} starts soon!`)
+          .map(event => `Reminder: ${event.title} starts soon!`)
           .filter(notif => !prev.includes(notif));
   
         const activeNotifications = prev.filter(notif => {
@@ -210,6 +210,7 @@ function App() {
             onDateClick={handleDateClick}
             onEventClick={handleEventClick}
             events={events}
+            currentUserId={userObjectID}
           />
         </div>
       </div>

@@ -4,7 +4,7 @@ import dayGridPlugin from '@fullcalendar/daygrid'
 import interactionPlugin from '@fullcalendar/interaction'
 
 // Calendar component that accepts onDateClick, handleEventClick, and events
-export default function Calendar({onDateClick, onEventClick, events}) {
+export default function Calendar({onDateClick, onEventClick, events, currentUserId}) {
     return (
         <FullCalendar
         plugins={[dayGridPlugin, interactionPlugin]}
@@ -13,13 +13,20 @@ export default function Calendar({onDateClick, onEventClick, events}) {
         events={events} // Pass the events to display on the calendar
         eventContent={renderEventContent}
         eventClick={onEventClick}
-        eventBackgroundColor=''
+        eventDidMount={(info) => {
+            const isOwner = info.event.extendedProps.owner === currentUserId;
+            if (isOwner) {
+              info.el.style.backgroundColor = '#4CAF50'; // green for owner
+              info.el.style.borderColor = '#4CAF50';
+              info.el.style.color = 'white';
+            }}}
         />
     )
 }
 
 // Function that renders the event content inside each event cell
 function renderEventContent(eventInfo) {
+    ///eventInfo.event.setProp("backgroundColor", "red");
     return(
         <>
             {/* Display event time and title */}
