@@ -1,5 +1,5 @@
 // Imports for React, Stripe, and Components within the src folder
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './css/App.css';
 import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
@@ -45,6 +45,36 @@ function App() {
       return;
     }
   }
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const now = new Date();
+  
+      // Filter events happening within the next 15 minutes
+      const upcomingEvents = events.filter(event => {
+        const eventTime = new Date(event.date);
+        const timeDiff = (eventTime - now) / (60 * 1000);
+        return timeDiff > 0 && timeDiff <= 15;
+      });
+  
+      // Add new notifications and remove past ones
+      setNotifications(prev => {
+        const newNotifications = upcomingEvents
+          .map(event => `Reminder: ${event.name} starts soon!`)
+          .filter(notif => !prev.includes(notif));
+  
+        const activeNotifications = prev.filter(notif => {
+          const eventName = notif.replace('Reminder: ', '').replace(' starts soon!', '');
+          return upcomingEvents.some(event => event.name === eventName && new Date(event.date) > now);
+        });
+  
+        return [...activeNotifications, ...newNotifications];
+      });
+  
+    }, 10 * 1000);
+  
+    return () => clearInterval(interval);
+  }, [events]); // Runs whenever `events` change
 
   // Directs users to login page if they are not yet logedin or else calendar view
   if (!loggedIn) {
@@ -123,9 +153,7 @@ function App() {
       {/* Start of Nav bar */}
       <nav className="navbar navbar-expand-lg bg-primary" data-bs-theme="dark">
         <div className="container-fluid d-flex align-items-center justify-content-between">
-          <a className="navbar-brand text-white" href="#">
-            <h1 className="fs-3 mb-0">Orchestrate</h1>
-          </a>
+          <h1 className="fs-3 mb-0">Orchestrate</h1>
 
           <div className="d-flex align-items-center">
             {/* Notification Icon for event reminders */}
@@ -201,6 +229,6 @@ function App() {
       )}
     </div>
   );
-}
+};
 
 export default App; // Exports the App component to be used throughout the application
