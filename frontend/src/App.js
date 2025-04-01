@@ -47,6 +47,21 @@ function App() {
     setShowPopup(true);
   };
 
+
+  // Saves a new event or updates previous to the events state and adds the event to the existing list
+  const handleSaveEvent = (newEvent) => {
+    setEvents(prevEvents => {
+      const isEditing = selectedEvent !== null;
+  
+      if (isEditing) {
+        return prevEvents.map(ev => 
+          ev.start === selectedEvent.start ? { ...ev, ...newEvent } : ev
+        );
+      } else {
+        return [...prevEvents, newEvent];
+      }
+    });
+
   // Saves a new event to the events state and adds the event to the existing list
   const handleSaveEvent = async (event) => {
     const newEvent = {
@@ -151,6 +166,7 @@ function App() {
           selectedDate={selectedDate}
           selectedEvent={selectedEvent}
           onSave={handleSaveEvent}
+          // isOwner={userIsOwner}
           onClose={() => {
             setShowPopup(false); // Hides the popup
             setSelectedEvent(null); // Clears the selected event
@@ -160,7 +176,5 @@ function App() {
     </div>
   );
 }
-
-
 
 export default App; // Exports the App component to be used throughout the application
