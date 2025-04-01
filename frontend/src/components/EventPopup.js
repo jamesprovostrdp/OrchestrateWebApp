@@ -38,7 +38,7 @@ export default function OwnerEventPopup({selectedDate, selectedEvent, onSave, on
                 location,
                 paymentRequired,
                 notes,
-                amount,
+                amount: amount,
             });
             onClose();
         }

@@ -11,6 +11,7 @@ import EventSignup from './components/EventSignup';
 import NotificationSystem from './components/NotificationSystem';
 import LoginPage from './components/LoginPage';
 import RegistrationPage from'./components/RegistrationPage';
+import mongoose from 'mongoose';
 
 // Used for Stripe implementation
 const stripePromise = loadStripe('pk_test_51R6da3R4C0NESzZKViVuNOnUVPxs3n71XZuijiIuTKCx5wFu7XXeJDKZN2pgrCN94LOMPb3XwkF90SB1aRr91IqH00cGulU19M'); // public key
@@ -26,6 +27,24 @@ function App() {
   const [showNotifications, setShowNotifications] = useState(false);
   const [loggedIn, setLoggedIn] = useState(false);
   const [register, setRegister] = useState(false);
+  const [userObjectID, setUserID] = useState("");
+
+  const getEvents = async (userID) => {
+    // Get Events from user ID
+    const databaseSend = await fetch(`http://localhost:3001/api/event/owned/${userID}`);
+
+    // Parse for events
+    const { events } = await databaseSend.json();
+
+    // Set events if results gained
+    if (databaseSend.status === 200 || databaseSend.status === 404) {
+      setEvents(events);
+    }
+    else {
+      setEvents([]);
+      return;
+    }
+  }
 
   // Directs users to login page if they are not yet logedin or else calendar view
   if (!loggedIn) {
@@ -34,7 +53,11 @@ function App() {
     } else {
       return (
         <LoginPage
-          onLogin={() => setLoggedIn(true)}
+          onLogin={(userID) => {
+            setLoggedIn(true);
+            setUserID(userID);
+            getEvents(userID);
+          }}
           onRegister={() => setRegister(true)}
         />
       );
@@ -47,35 +70,38 @@ function App() {
     setShowPopup(true);
   };
 
-
-  // Saves a new event or updates previous to the events state and adds the event to the existing list
-  const handleSaveEvent = (newEvent) => {
-    setEvents(prevEvents => {
-      const isEditing = selectedEvent !== null;
-  
-      if (isEditing) {
-        return prevEvents.map(ev => 
-          ev.start === selectedEvent.start ? { ...ev, ...newEvent } : ev
-        );
-      } else {
-        return [...prevEvents, newEvent];
-      }
-    });
-
   // Saves a new event to the events state and adds the event to the existing list
   const handleSaveEvent = async (event) => {
-    const newEvent = {
-      name: event.title,
-      date: new Date(event.start).toISOString(), // Ensures correct date format
-      amount: event.amount
-    };
-    
-    const databaseSend = await fetch("http://localhost:3001/api/event/create/1", {
+    // Send event to database
+    const databaseSend = await fetch(`http://localhost:3001/api/event/create`, {
+
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title: event.title, start: event.start, end: event.start, payment_amount: event.amount })
+        body: JSON.stringify({ title: event.title, start: event.start, end: event.start, payment_amount: event.amount, id: userObjectID })
     });
     setEvents([...events, newEvent]);
+
+    // Save event in events if successful
+    if (databaseSend.status === 201) {
+      
+      // Checks if its updating or not
+          setEvents(prevEvents => {
+            const isEditing = selectedEvent !== null;
+
+            if (isEditing) {
+              return prevEvents.map(ev => 
+                ev.start === selectedEvent.start ? { ...ev, ...event } : ev
+              );
+            } else {
+              return [...prevEvents, event];
+            }
+          });
+      getEvents(userObjectID);
+      return;
+    }
+    else {
+      return;
+    }
   };
 
   // Function to handle clicking on an existing event in the calendar, reload event information when selected
@@ -89,8 +115,8 @@ function App() {
       notes: event.extendedProps.notes,
       amount: event.extendedProps.amount
     });
-    setShowPopup(true) // Shows the event popup with the event details
-  }
+    setShowPopup(true); // Shows the event popup with the event details
+  };
 
   return (
     <div className="App">
