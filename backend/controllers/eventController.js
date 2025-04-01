@@ -1,16 +1,16 @@
-const mongoose = require('mongoose');
-const Event = require('../models/Events');
+const { default: mongoose } = require('mongoose');
+const Event = require('../models/Event');
 
 // Return an Event by ID in parameter
 const getEventByID = async (req, res) => {
     try {
-        const event = await Event.findById(req.params.id);
+        const event = await Events.findById(req.params.id);
 
         if (!event) return res.status(404).json({ message: "Event not found."});
         
-        res.status(200).json(event);
+        return res.status(200).json(event);
     } catch (err) {
-        res.status(500).json({ message: 'Error retrieving event', err });
+        return res.status(500).json({ message: 'Error retrieving event', err });
     }
 };
 
@@ -23,15 +23,13 @@ const getOwnedEventsByUserID = async (req, res) => {
     }
 
     try {
-        const userObjectID = mongoose.Types.ObjectId(id);
+        const ownedEvents = await Event.find({ owner: id });
 
-        const ownedEvents = await Event.find({ owner: userObjectID });
-
-        if (!ownedEvents || ownedEvents.length <= 0) return res.status(404).json({ message: "Owned Events not found."});
+        if (!ownedEvents || ownedEvents.length <= 0) return res.status(404).json({ events: [], message: "Owned Events not found or empty."});
         
-        res.status(200).json(ownedEvents);
+        return res.status(200).json({ events: ownedEvents });
     } catch (err) {
-        res.status(500).json({ message: 'Error retrieving events', err });
+        return res.status(500).json({ message: 'Error retrieving events', err });
     }
 };
 
@@ -50,24 +48,26 @@ const getJoinedEventsByUserID = async (req, res) => {
 
         if (!joinedEvents || joinedEvents.length <= 0) return res.status(404).json({ message: "Joined Events not found."});
         
-        res.status(200).json(joinedEvents);
+        return res.status(200).json({ events: joinedEvents});
     } catch (err) {
-        res.status(500).json({ message: 'Error retrieving events', err });
+        return res.status(500).json({ message: 'Error retrieving events', err });
     }
 };
 
 // Create an event and grant ownership
 const createEvent = async (req, res) => {
-    const { id } = req.params;
-    const { title, start, end, payment_amount } = req.body;
+    //const { id } = req.params;
+    const { title, start, end, payment_amount, id } = req.body;
 
+    if (!title || !start || !end || !payment_amount || !id) {
+        return res.status(400).json({ error: 'Missing required fields' });
+    }
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
         return res.status(400).json({ error: 'Invalid ID format' });
     }
 
     try {
-        const userObjectID = mongoose.Types.ObjectId(id);
 
         const createdEvent = await Event.create(
             {
@@ -75,15 +75,15 @@ const createEvent = async (req, res) => {
                 start: start,
                 end: end,
                 payment_amount: payment_amount,
-                owner: userObjectID 
+                owner: id 
             }
         );
 
         if (!createdEvent) return res.status(404).json({ message: "Event not created."});
         
-        res.status(200).json(createdEvent);
+        return res.status(201).json(createdEvent);
     } catch (err) {
-        res.status(500).json({ message: 'Error creating event', err });
+        return res.status(500).json({ message: 'Error creating event', err });
     }
 };
 
@@ -109,9 +109,9 @@ const joinEventByID = async (req, res) => {
 
         if (!event) return res.status(404).json({ message: "Event not joined as event doesn't exist."});
         
-        res.status(200).json(event);
+        return res.status(200).json(event);
     } catch (err) {
-        res.status(500).json({ message: 'Error joining event', err });
+        return res.status(500).json({ message: 'Error joining event', err });
     }
 };
 
