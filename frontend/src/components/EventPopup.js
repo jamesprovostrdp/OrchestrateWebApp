@@ -19,7 +19,6 @@ export default function OwnerEventPopup({selectedDate, selectedEvent, onSave, on
     const [amount, setAmount] = useState('');
     const [notes, setNotes] = useState('');
     const [formReady, setFormReady] = useState(false);
-    const [showPaymentForm, setShowPaymentForm] = useState(false);
 
 
 
@@ -29,12 +28,13 @@ export default function OwnerEventPopup({selectedDate, selectedEvent, onSave, on
 // Combines date and time and stores the items on save
     const handleSubmit = (e) => {
         e.preventDefault();
-        const dateTime = `${selectedDate || selectedEvent.start.split('T')[0]}T${startTime}`;
+        const startTime = `${selectedDate || selectedEvent.start.split('T')[0]}T${startTime}`;
         if (name.trim()) {
             const displayTitle = `${paymentRequired ? ' $ ' : ''} ${name}`;
             onSave ({
                 title: displayTitle,
-                start: dateTime,
+                start: startTime,
+                end: endTime,
                 location,
                 paymentRequired,
                 notes,
@@ -128,24 +128,6 @@ export default function OwnerEventPopup({selectedDate, selectedEvent, onSave, on
                             <input type="number" className="form-control" placeholder="$0.00" value={amount}
                             onChange={(e) => setAmount(e.target.value)}
                             />
-
-                                <label className="form-label">Payment Amount</label>
-                                <input
-                                type="number"
-                                className="form-control"
-                                placeholder="$0.00"
-                                value={amount}
-                                onChange={(e) => setAmount(e.target.value)}
-                                />
-
-                                <div className="mt-4">
-                                    <h5>Complete Payment</h5>
-                                    <Elements stripe={stripePromise}>
-                                        <PaymentForm payment={amount} />
-                                    </Elements>
-                                    </div>
-
-
                             </div>
                             )}
                  

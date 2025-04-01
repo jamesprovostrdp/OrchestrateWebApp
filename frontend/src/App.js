@@ -11,7 +11,7 @@ import EventSignup from './components/EventSignup';
 import NotificationSystem from './components/NotificationSystem';
 import LoginPage from './components/LoginPage';
 import RegistrationPage from'./components/RegistrationPage';
-import mongoose from 'mongoose';
+
 
 // Used for Stripe implementation
 const stripePromise = loadStripe('pk_test_51R6da3R4C0NESzZKViVuNOnUVPxs3n71XZuijiIuTKCx5wFu7XXeJDKZN2pgrCN94LOMPb3XwkF90SB1aRr91IqH00cGulU19M'); // public key
@@ -109,7 +109,7 @@ function App() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ title: event.title, start: event.start, end: event.start, payment_amount: event.amount, id: userObjectID })
     });
-    setEvents([...events, newEvent]);
+
 
     // Save event in events if successful
     if (databaseSend.status === 201) {
