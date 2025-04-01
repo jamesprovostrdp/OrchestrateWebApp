@@ -19,6 +19,8 @@ export default function OwnerEventPopup({selectedDate, selectedEvent, onSave, on
     const [amount, setAmount] = useState('');
     const [notes, setNotes] = useState('');
     const [formReady, setFormReady] = useState(false);
+    const [showPaymentForm, setShowPaymentForm] = useState(false);
+
 
 
 
@@ -126,13 +128,6 @@ export default function OwnerEventPopup({selectedDate, selectedEvent, onSave, on
                             onChange={(e) => setAmount(e.target.value)}
                             />
 
-                                <div className="mt-4">
-                                    <h5>Complete Payment</h5>
-                                    <Elements stripe={stripePromise}>
-                                        <PaymentForm/>
-                                    </Elements>
-
-                                </div>
                             </div>
                             )}
                  
@@ -142,8 +137,16 @@ export default function OwnerEventPopup({selectedDate, selectedEvent, onSave, on
                             </div>
                         </div>
                 </form>
+
+                
+                <h5>Complete Payment</h5>
+                <Elements stripe={stripePromise}>
+                    <PaymentForm/>
+                </Elements>
+
+                </div>
             </div>
-        </div>
     );
 }
   
+
