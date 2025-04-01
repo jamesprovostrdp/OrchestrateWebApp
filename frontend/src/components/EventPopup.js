@@ -167,4 +167,3 @@ export default function OwnerEventPopup({selectedDate, selectedEvent, onSave, on
     );
 }
   
-
