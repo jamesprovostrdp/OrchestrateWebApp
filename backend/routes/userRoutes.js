@@ -1,5 +1,5 @@
 const express = require('express');
-const { registerUser, loginUser } = require('../controllers/userController');
+const { registerUser, loginUser, getUserInfo } = require('../controllers/userController');
 const protect = require('../middleware/authMiddleware');
 const userRouter = express.Router();
 
@@ -11,5 +11,8 @@ userRouter.post('/login', loginUser);
 
 // GET: (protected) a protected route that requires authorization for testing
 userRouter.get('/protected', protect, (req, res) => res.send("Welcome to the protected route"));
+
+// GET: Get user information (email and username)
+userRouter.get('/info/:id', getUserInfo);
 
 module.exports = userRouter;
