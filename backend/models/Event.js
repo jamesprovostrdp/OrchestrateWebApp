@@ -11,12 +11,12 @@ const mongoose = require('mongoose');
 
 const eventSchema = new mongoose.Schema({
     title: { type: String, required: true },
-    start: { type: Date, required: true },
-    end: { type: Date, required: true },
-    title: { type: String, required: false },
+    start: { type: String, required: true },
+    end: { type: String, required: true },
+    location: { type: String, required: false },
     notes: { type: String, required: false },
-    payment_amount: { type: mongoose.Schema.Types.Decimal128, required: true, default: 0.00 },
-    owner: { type: [mongoose.Schema.Types.ObjectId], required: true },
+    payment_amount: { type: String, required: true },
+    owner: { type: String, required: true },
     members: { type: [mongoose.Schema.Types.ObjectId], required: false }
 });
 
