@@ -13,6 +13,7 @@ export default function Calendar({onDateClick, onEventClick, events}) {
         events={events} // Pass the events to display on the calendar
         eventContent={renderEventContent}
         eventClick={onEventClick}
+        eventBackgroundColor=''
         />
     )
 }

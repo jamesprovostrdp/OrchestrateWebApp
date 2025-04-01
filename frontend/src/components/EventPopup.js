@@ -8,23 +8,28 @@ const stripePromise = loadStripe('pk_test_51R6da3R4C0NESzZKViVuNOnUVPxs3n71XZuij
 
 
 
-export default function OwnerEventPopup({selectedDate, selectedEvent, onSave, onClose}){
+export default function OwnerEventPopup({selectedDate, selectedEvent, onSave, onClose, isOwner}){
 
     // Holds values
     const [name, setName] = useState(selectedEvent?.title?.replace('Event - ', '') || '');
-    const [time, setTime] = useState(selectedEvent?.start?.split('T')[1]?.slice(0, 5) || '');
+    const [startTime, setStartTime] = useState(selectedEvent?.start?.split('T')[1]?.slice(0, 5) || '');
+    const [endTime, setEndTime] = useState(selectedEvent?.start?.split('T')[1]?.slice(0, 5) || '');
     const [location, setLocation] = useState('');
     const [paymentRequired, setPaymentRequired] = useState(false);
     const [amount, setAmount] = useState('');
     const [notes, setNotes] = useState('');
     const [formReady, setFormReady] = useState(false);
+    const [showPaymentForm, setShowPaymentForm] = useState(false);
+
+
+
 
 
 
 // Combines date and time and stores the items on save
     const handleSubmit = (e) => {
         e.preventDefault();
-        const dateTime = `${selectedDate || selectedEvent.start.split('T')[0]}T${time}`;
+        const dateTime = `${selectedDate || selectedEvent.start.split('T')[0]}T${startTime}`;
         if (name.trim()) {
             const displayTitle = `${paymentRequired ? ' $ ' : ''} ${name}`;
             onSave ({
@@ -43,14 +48,16 @@ export default function OwnerEventPopup({selectedDate, selectedEvent, onSave, on
     useEffect(() => {
         if (selectedEvent) {
           setName(selectedEvent.title?.replace('Event - ', '') || '');
-          setTime(selectedEvent.start?.split('T')[1]?.slice(0, 5) || '');
+          setStartTime(selectedEvent.start?.split('T')[1]?.slice(0, 5) || '');
+          setEndTime(selectedEvent.start?.split('T')[1]?.slice(0, 5) || '');
           setLocation(selectedEvent.location || '');
           setPaymentRequired(selectedEvent.paymentRequired || false);
           setNotes(selectedEvent.notes || '');
           setAmount(selectedEvent.amount || '');
         } else {
           setName('');
-          setTime('');
+          setStartTime('');
+          setEndTime('');
           setLocation('');
           setPaymentRequired(false);
           setNotes('');
@@ -60,6 +67,8 @@ export default function OwnerEventPopup({selectedDate, selectedEvent, onSave, on
       }, [selectedEvent]);
     
 
+    //   disabled={!isOwner} 
+
     //   event popup form to create event
     return (
         <div className="modal-overlay d-flex align-items-center justify-content-center">
@@ -67,9 +76,11 @@ export default function OwnerEventPopup({selectedDate, selectedEvent, onSave, on
                 <form onSubmit={handleSubmit} id='eventPopupContent'>
                     <div className="mb-3">
 
+                    {selectedEvent && (
                     <div className="d-flex justify-content-end mb-3">
                     <button type="button" className="btn btn-outline-success">Share</button>
                     </div>
+                    )}
 
                             <label className="form-label">Event Name:</label>
                             <input type="text" className="form-control"
@@ -77,10 +88,23 @@ export default function OwnerEventPopup({selectedDate, selectedEvent, onSave, on
                             onChange={(e) => setName(e.target.value)}
                             />
                             
-                            <label className="form-label">Time:</label>
-                            <input type="time" className="form-control mb-3" value={time}
-                            onChange={(e) => setTime(e.target.value)}
+
+                            <div className='row'>
+                                <div className='col'>
+                            <label className="form-label">Start Time:</label>
+                            <input type="time" className="form-control mb-3" value={startTime}
+                            onChange={(e) => setStartTime(e.target.value)}
                             />
+                            </div>
+
+                            <div className='col'>
+                            <label className="form-label">End Time:</label>
+                            <input type="time" className="form-control mb-3" value={endTime}
+                            onChange={(e) => setEndTime(e.target.value)}
+                            />
+                            </div>
+
+                            </div>
 
                             <label className="form-label">Location:</label>
                             <input type="text" className="form-control"
@@ -89,18 +113,22 @@ export default function OwnerEventPopup({selectedDate, selectedEvent, onSave, on
                             />
 
                             <label className="form-label">Additional Notes</label>
-                                <textarea
-                                    className="form-control"
-                                    rows="3"
-                                    value={notes}
-                                    onChange={(e) => setNotes(e.target.value)}
+                                <textarea className="form-control" rows="3"
+                                    value={notes} onChange={(e) => setNotes(e.target.value)}
                                 ></textarea>
                             
-                            <input className="form-check-input" type="checkbox" id="flexCheckDefault" checked={paymentRequired} onChange={(e) => setPaymentRequired(e.target.checked)}/>
+                            <input className="form-check-input" type="checkbox" 
+                            id="flexCheckDefault" checked={paymentRequired} onChange={(e) => setPaymentRequired(e.target.checked)}/>
                             <label className="form-check-label" htmlfor="flexCheckDefault">Payment Required</label>
 
                             {paymentRequired && (
                             <div className="mt-3">
+
+                            <label className="form-label">Payment Amount</label>
+                            <input type="number" className="form-control" placeholder="$0.00" value={amount}
+                            onChange={(e) => setAmount(e.target.value)}
+                            />
+
                                 <label className="form-label">Payment Amount</label>
                                 <input
                                 type="number"
@@ -117,6 +145,7 @@ export default function OwnerEventPopup({selectedDate, selectedEvent, onSave, on
                                     </Elements>
                                     </div>
 
+
                             </div>
                             )}
                  
@@ -126,8 +155,16 @@ export default function OwnerEventPopup({selectedDate, selectedEvent, onSave, on
                             </div>
                         </div>
                 </form>
+
+                
+                <h5>Complete Payment</h5>
+                <Elements stripe={stripePromise}>
+                    <PaymentForm/>
+                </Elements>
+
+                </div>
             </div>
-        </div>
     );
 }
   
+
