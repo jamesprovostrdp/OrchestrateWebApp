@@ -46,6 +46,21 @@ function App() {
     setShowPopup(true);
   };
 
+
+  // Saves a new event or updates previous to the events state and adds the event to the existing list
+  const handleSaveEvent = (newEvent) => {
+    setEvents(prevEvents => {
+      const isEditing = selectedEvent !== null;
+  
+      if (isEditing) {
+        return prevEvents.map(ev => 
+          ev.start === selectedEvent.start ? { ...ev, ...newEvent } : ev
+        );
+      } else {
+        return [...prevEvents, newEvent];
+      }
+    });
+
   // Saves a new event to the events state and adds the event to the existing list
   const handleSaveEvent = async (event) => {
     const databaseSend = await fetch("http://localhost:3001/api/event/create/1", {
@@ -54,6 +69,7 @@ function App() {
         body: JSON.stringify({ title: event.title, start: event.start, end: event.start, payment_amount: event.amount })
     });
     setEvents([...events, event]);
+
   };
 
   // Function to handle clicking on an existing event in the calendar, reload event information when selected
@@ -161,6 +177,7 @@ function App() {
           selectedDate={selectedDate}
           selectedEvent={selectedEvent}
           onSave={handleSaveEvent}
+          // isOwner={userIsOwner}
           onClose={() => {
             setShowPopup(false); // Hides the popup
             setSelectedEvent(null); // Clears the selected event
