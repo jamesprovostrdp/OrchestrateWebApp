@@ -112,45 +112,42 @@ function App() {
 
   // Saves a new event to the events state and adds the event to the existing list
   const handleSaveEvent = async (event) => {
-    // Send event to database
-    const databaseSend = await fetch(`http://localhost:3001/api/event/create`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(
-          { 
-            title: event.title,
-            start: event.start, 
-            end: event.end, 
-            payment_amount: event.amount,
-            notes: event.notes,
-            location: event.location,
-            id: userObjectID 
-          })
-    });
 
+	// Send event to database
+	const databaseSend = await fetch(`http://localhost:3001/api/event/create`, {
+		method: "POST",
+		headers: { "Content-Type": "application/json" },
+		body: JSON.stringify(
+		{ 
+			title: event.title,
+			start: event.start, 
+			end: event.end, 
+			payment_amount: event.amount,
+			notes: event.notes,
+			location: event.location,
+			id: userObjectID
+		})
+	});
 
-    // Save event in events if successful
-    if (databaseSend.status === 201) {
-      
-      // Checks if its updating or not
-          setEvents(prevEvents => {
-            const isEditing = selectedEvent !== null;
+	// Save event in events if successful
+	if (databaseSend.status === 201) {
+		setEvents(prevEvents => {
 
-            if (isEditing) {
-              return prevEvents.map(ev => 
-                ev.start === selectedEvent.start ? { ...ev, ...event } : ev
-              );
-            } else {
-              return [...prevEvents, event];
-            }
-          });
+			if (selectedEvent !== null) {
+				return prevEvents.map(ev => 
+					ev.start === selectedEvent.start ? { ...ev, ...event } : ev
+				);
+			} else {
+				return [...prevEvents, event];
+			}
+		});
 
-      getEvents(userObjectID);
-      return;
-    }
-    else {
-      return;
-    }
+		getEvents(userObjectID);
+		return;
+	}
+	else {
+		return;
+	}
   };
 
   // Function to handle clicking on an existing event in the calendar, reload event information when selected
