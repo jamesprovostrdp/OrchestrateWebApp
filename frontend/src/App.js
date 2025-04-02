@@ -49,17 +49,19 @@ function App() {
 
     // Set events if results gained
     if (databaseSend.status === 200 || databaseSend.status === 404) {
-      setEvents(events);
+    	setEvents(events);
     }
     else {
-      setEvents([]);
-      return;
+		// If results arent gained return no events
+    	setEvents([]);
+    	return;
     }
   }
 
   	// Finds user based on email and has them join the given event
   	const sendEventToEmail = async (emailAndEvent) => {
 
+		// Collect user ID via their email with the info api endpoint
 		const databaseGetUserID = await fetch(`http://localhost:3001/api/user/info`, {
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
@@ -69,8 +71,10 @@ function App() {
 			})
 		});
 
+		// Collect the response
 		const collectedUser = await databaseGetUserID.json();
 
+		// Use the collected user to join the event
 		const databaseSend = await fetch(`http://localhost:3001/api/event/join/${collectedUser.id}`, {
 			method: "PUT",
 			headers: { "Content-Type": "application/json" },
@@ -80,6 +84,7 @@ function App() {
 			})
 		});
 
+		// Exit function
 		return;
 	};
 
@@ -116,7 +121,7 @@ function App() {
   // Directs users to login page if they are not yet logedin or else calendar view
   if (!loggedIn) {
     if (register) {
-      return <RegistrationPage onBackToLogin={() => setRegister(false)} onLogin={() => setLoggedIn(true)} />;
+      return <RegistrationPage onBackToLogin={() => setRegister(false)} onLogin={() => setLoggedIn(false)} />;
     } else {
       return (
         <LoginPage
