@@ -8,7 +8,7 @@ const stripePromise = loadStripe('pk_test_51R6da3R4C0NESzZKViVuNOnUVPxs3n71XZuij
 
 
 
-export default function OwnerEventPopup({selectedDate, selectedEvent, onSave, onClose, sendEventToEmail, shareBtn}){
+export default function OwnerEventPopup({selectedDate, selectedEvent, onSave, onClose, sendEventToEmail, isDisabled}){
 
     // Holds values
     const [name, setName] = useState(selectedEvent?.title?.replace('Event - ', '') || '');
@@ -76,8 +76,6 @@ export default function OwnerEventPopup({selectedDate, selectedEvent, onSave, on
 
     //   event popup form to create event
     return (
-
-        
         <div className="modal-overlay d-flex align-items-center justify-content-center">
             <div className="modal-content bg-white p-4 rounded shadow">
                 <form onSubmit={handleSubmit} id='eventPopupContent'>
@@ -89,12 +87,10 @@ export default function OwnerEventPopup({selectedDate, selectedEvent, onSave, on
                     </div>
                     )}
                     {showShare && (
-                        <div style={{width: '90%', margin: '0 auto'}}>
+                        <div style={{width: '90%', margin: '0 auto', backgroundColor:'#609b8a', padding:'5px', color:'black', borderRadius: '20px' }}>
                             <div>
-                                <label htmlFor="inputEmail" className="form-label mt-4">Email address</label>
-                                <input type="email" className="form-control" id="inputEmail" aria-describedby="emailHelp" placeholder="Enter email"
-                                value={shareEmail}
-                                onChange={(e) => setShareEmail(e.target.value)} />
+                                <label htmlFor="exampleInputEmail1" className="form-label mt-4">Email address</label>
+                                <input type="email" className="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email" fdprocessedid="scyye"/>
                             </div>
                             <div className="modal-footer" style={{justifyContent:'center' }}>
                                 <button type="button" className="btn btn-primary mt-3 mb-3 me-2" onClick={() => sendEventToEmail({email: shareEmail, event: eventID})}>Send</button>
@@ -104,7 +100,7 @@ export default function OwnerEventPopup({selectedDate, selectedEvent, onSave, on
                     )}
 
                             <label className="form-label">Event Name:</label>
-                            <input type="text" className="form-control"
+                            <input required alert disabled={isDisabled} type="text" className="form-control"
                             placeholder="Enter name of event" value={name}
                             onChange={(e) => setName(e.target.value)}
                             />
@@ -113,14 +109,14 @@ export default function OwnerEventPopup({selectedDate, selectedEvent, onSave, on
                             <div className='row'>
                                 <div className='col'>
                             <label className="form-label">Start Time:</label>
-                            <input type="time" className="form-control mb-3" value={startTime}
+                            <input required disabled={isDisabled} type="time" className="form-control mb-3" value={startTime}
                             onChange={(e) => setStartTime(e.target.value)}
                             />
                             </div>
 
                             <div className='col'>
                             <label className="form-label">End Time:</label>
-                            <input type="time" className="form-control mb-3" value={endTime}
+                            <input required disabled={isDisabled} type="time" className="form-control mb-3" value={endTime}
                             onChange={(e) => setEndTime(e.target.value)}
                             />
                             </div>
@@ -128,17 +124,17 @@ export default function OwnerEventPopup({selectedDate, selectedEvent, onSave, on
                             </div>
 
                             <label className="form-label">Location:</label>
-                            <input type="text" className="form-control"
-                            placeholder="Enter location or Address" value={location}
+                            <input disabled={isDisabled} type="text" className="form-control"
+                                value={location}
                             onChange={(e) => setLocation(e.target.value)}
                             />
 
                             <label className="form-label">Additional Notes</label>
-                                <textarea className="form-control" rows="3"
+                                <textarea disabled={isDisabled} className="form-control" rows="3"
                                     value={notes} onChange={(e) => setNotes(e.target.value)}
                                 ></textarea>
                             
-                            <input className="form-check-input" type="checkbox" 
+                            <input disabled={isDisabled} className="form-check-input" type="checkbox" 
                             id="flexCheckDefault" checked={paymentRequired}
                             onChange={(e) => setPaymentRequired(e.target.checked)}
                             />
@@ -147,13 +143,11 @@ export default function OwnerEventPopup({selectedDate, selectedEvent, onSave, on
                             {(paymentRequired || amount) && (
                             <div className="mt-3">
                                 <label className="form-label">Payment Amount</label>
-                                <input type="number" className="form-control" placeholder="$0.00" value={amount}
+                                <input disabled={isDisabled} type="number" className="form-control" placeholder="$0.00" value={amount}
                                 onChange={(e) => setAmount(e.target.value)}
                                 />
                             </div>
                             )}
-
-
                  
                             <div className="mt-4">
                                 <button type="submit" className="btn btn-success me-2">Save</button>
@@ -161,7 +155,10 @@ export default function OwnerEventPopup({selectedDate, selectedEvent, onSave, on
                             </div>
                         </div>
                 </form>
-            
+
+
+
+            {/* Stripe payment form */}
                 {selectedEvent && (
                 <div style={{width: '90%', margin: '0 auto'}}>
                 <h5>Complete Payment</h5>
