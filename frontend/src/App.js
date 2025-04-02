@@ -29,6 +29,7 @@ function App() {
   const [register, setRegister] = useState(false);
   const [userObjectID, setUserID] = useState("");
 
+
   const getEvents = async (userID) => {
 
     // Get Owned Events from user ID
@@ -233,17 +234,20 @@ function App() {
         </div>
       </div>
 
+
+
+
       {/* Event Popup - Shown when a user clicks on an event */}
       {showPopup && (
-        <EventPopup
+        <EventPopup 
           selectedDate={selectedDate}
           selectedEvent={selectedEvent}
           onSave={handleSaveEvent}
-          // isOwner={userIsOwner}
           onClose={() => {
             setShowPopup(false); // Hides the popup
             setSelectedEvent(null); // Clears the selected event
           }}
+          // isReadOnly={selectedEvent !==null}
         />
       )}
     </div>
