@@ -35,7 +35,7 @@ export default function OwnerEventPopup({selectedDate, selectedEvent, onSave, on
             onSave ({
                 title: displayTitle,
                 start: dateTime,
-                end: endTime,
+                end: `${selectedDate || selectedEvent.start.split('T')[0]}T${endTime}`,
                 location,
                 paymentRequired,
                 notes,
@@ -48,24 +48,27 @@ export default function OwnerEventPopup({selectedDate, selectedEvent, onSave, on
     // This will populate form if already exists or will clear for new form
     useEffect(() => {
         if (selectedEvent) {
+            console.log("selectedEvent.end:", selectedEvent.end);
+
           setName(selectedEvent.title?.replace('Event - ', '') || '');
           setStartTime(selectedEvent.start?.split('T')[1]?.slice(0, 5) || '');
-          setEndTime(selectedEvent.start?.split('T')[1]?.slice(0, 5) || '');
+          setEndTime(selectedEvent.end?.split('T')[1]?.slice(0, 5) || '');
           setLocation(selectedEvent.location || '');
-          setPaymentRequired(selectedEvent.paymentRequired || false);
           setNotes(selectedEvent.notes || '');
-          setAmount(selectedEvent.amount || '');
+          setAmount(selectedEvent.payment_amount || selectedEvent.amount || '');
+          setPaymentRequired(selectedEvent.paymentRequired || selectedEvent.payment_required || false);
         } else {
           setName('');
           setStartTime('');
           setEndTime('');
           setLocation('');
-          setPaymentRequired(false);
           setNotes('');
           setAmount('');
+          setPaymentRequired(false);
         }
-        setFormReady(true)
+        setFormReady(true);
       }, [selectedEvent]);
+      
     
 
     //   disabled={!isOwner} 
@@ -119,18 +122,21 @@ export default function OwnerEventPopup({selectedDate, selectedEvent, onSave, on
                                 ></textarea>
                             
                             <input className="form-check-input" type="checkbox" 
-                            id="flexCheckDefault" checked={paymentRequired} onChange={(e) => setPaymentRequired(e.target.checked)}/>
-                            <label className="form-check-label" htmlfor="flexCheckDefault">Payment Required</label>
-
-                            {paymentRequired && (
-                            <div className="mt-3">
-
-                            <label className="form-label">Payment Amount</label>
-                            <input type="number" className="form-control" placeholder="$0.00" value={amount}
-                            onChange={(e) => setAmount(e.target.value)}
+                            id="flexCheckDefault" checked={paymentRequired}
+                            onChange={(e) => setPaymentRequired(e.target.checked)}
                             />
+                            <label className="form-check-label" htmlFor="flexCheckDefault">Payment Required</label>
+
+                            {(paymentRequired || amount) && (
+                            <div className="mt-3">
+                                <label className="form-label">Payment Amount</label>
+                                <input type="number" className="form-control" placeholder="$0.00" value={amount}
+                                onChange={(e) => setAmount(e.target.value)}
+                                />
                             </div>
                             )}
+
+
                  
                             <div className="mt-4">
                                 <button type="submit" className="btn btn-success me-2">Save</button>

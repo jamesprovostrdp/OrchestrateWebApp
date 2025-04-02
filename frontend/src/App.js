@@ -156,13 +156,15 @@ function App() {
     setSelectedEvent({
       title: event.title,
       start: event.startStr,
+      end: event.endStr, 
       location: event.extendedProps.location,
-      paymentRequired: event.extendedProps.paymentRequired,
       notes: event.extendedProps.notes,
-      amount: event.extendedProps.amount
+      paymentRequired: event.extendedProps.payment_required,
+      payment_amount: event.extendedProps.payment_amount
     });
-    setShowPopup(true); // Shows the event popup with the event details
+    setShowPopup(true);
   };
+  
 
   return (
     <div className="App">
