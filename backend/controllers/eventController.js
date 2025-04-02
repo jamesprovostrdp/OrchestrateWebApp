@@ -133,7 +133,7 @@ const joinEventByID = async (req, res) => {
 
 
     if (!mongoose.Types.ObjectId.isValid(id) || !mongoose.Types.ObjectId.isValid(event_id)) {
-        return res.status(400).json({ error: 'Invalid ID format' });
+        return res.status(400).json({ error: 'Invalid ID format', info: { userID: id, eventID: event_id } });
     }
 
     try {

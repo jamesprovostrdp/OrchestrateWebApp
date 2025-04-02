@@ -8,7 +8,7 @@ const stripePromise = loadStripe('pk_test_51R6da3R4C0NESzZKViVuNOnUVPxs3n71XZuij
 
 
 
-export default function OwnerEventPopup({selectedDate, selectedEvent, onSave, onClose, shareBtn}){
+export default function OwnerEventPopup({selectedDate, selectedEvent, onSave, onClose, sendEventToEmail, shareBtn}){
 
     // Holds values
     const [name, setName] = useState(selectedEvent?.title?.replace('Event - ', '') || '');
@@ -20,11 +20,8 @@ export default function OwnerEventPopup({selectedDate, selectedEvent, onSave, on
     const [notes, setNotes] = useState('');
     const [formReady, setFormReady] = useState(false);
     const [showShare, setShowShare] = useState(false);
-
-
-
-
-
+    const [shareEmail, setShareEmail] = useState('');
+    const [eventID, setEventID] = useState('');
 
 
 // Combines date and time and stores the items on save
@@ -58,6 +55,7 @@ export default function OwnerEventPopup({selectedDate, selectedEvent, onSave, on
           setNotes(selectedEvent.notes || '');
           setAmount(selectedEvent.payment_amount || selectedEvent.amount || '');
           setPaymentRequired(selectedEvent.paymentRequired || selectedEvent.payment_required || false);
+          setEventID(selectedEvent.id);
         } else {
           setName('');
           setStartTime('');
@@ -93,12 +91,14 @@ export default function OwnerEventPopup({selectedDate, selectedEvent, onSave, on
                     {showShare && (
                         <div style={{width: '90%', margin: '0 auto'}}>
                             <div>
-                                <label htmlFor="exampleInputEmail1" className="form-label mt-4">Email address</label>
-                                <input type="email" className="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email" fdprocessedid="scyye"/>
+                                <label htmlFor="inputEmail" className="form-label mt-4">Email address</label>
+                                <input type="email" className="form-control" id="inputEmail" aria-describedby="emailHelp" placeholder="Enter email"
+                                value={shareEmail}
+                                onChange={(e) => setShareEmail(e.target.value)} />
                             </div>
                             <div className="modal-footer" style={{justifyContent:'center' }}>
-                                <button type="button" className="btn btn-primary mt-3 mb-3 me-2"  fdprocessedid="hv2e44">Send</button>
-                                <button type="button" className="btn btn-secondary mt-3 mb-3 me-2" data-bs-dismiss="modal" fdprocessedid="ctriwb" onClick={() => setShowShare(false)}>Close</button>
+                                <button type="button" className="btn btn-primary mt-3 mb-3 me-2" onClick={() => sendEventToEmail({email: shareEmail, event: eventID})}>Send</button>
+                                <button type="button" className="btn btn-secondary mt-3 mb-3 me-2" data-bs-dismiss="modal" onClick={() => setShowShare(false)}>Close</button>
                             </div>
                         </div>
                     )}

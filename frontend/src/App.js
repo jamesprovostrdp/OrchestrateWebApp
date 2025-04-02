@@ -57,6 +57,32 @@ function App() {
     }
   }
 
+  	const sendEventToEmail = async (emailAndEvent) => {
+
+		const databaseGetUserID = await fetch(`http://localhost:3001/api/user/info`, {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify(
+			{
+				email: emailAndEvent.email
+			})
+		});
+
+		const collectedUser = await databaseGetUserID.json();
+
+		console.log(emailAndEvent.event);
+		const databaseSend = await fetch(`http://localhost:3001/api/event/join/${collectedUser.id}`, {
+			method: "PUT",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify(
+			{ 
+				event_id: emailAndEvent.event
+			})
+		});
+
+		return;
+	};
+
   useEffect(() => {
     const interval = setInterval(() => {
       const now = new Date();
@@ -154,6 +180,7 @@ function App() {
   // Function to handle clicking on an existing event in the calendar, reload event information when selected
   const handleEventClick = (arg) => {
     const event = arg.event;
+	console.log(event);
     setSelectedEvent({
       title: event.title,
       start: event.startStr,
@@ -161,7 +188,8 @@ function App() {
       location: event.extendedProps.location,
       notes: event.extendedProps.notes,
       paymentRequired: event.extendedProps.payment_required,
-      payment_amount: event.extendedProps.payment_amount
+      payment_amount: event.extendedProps.payment_amount,
+	  id: event.extendedProps._id
     });
     setShowPopup(true);
   };
@@ -247,6 +275,7 @@ function App() {
             setShowPopup(false); // Hides the popup
             setSelectedEvent(null); // Clears the selected event
           }}
+		  sendEventToEmail={sendEventToEmail}
           // isReadOnly={selectedEvent !==null}
         />
       )}
