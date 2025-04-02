@@ -81,7 +81,7 @@ const getAllEventsByUserID = async (req, res) => {
 // Create an event and grant ownership
 const createEvent = async (req, res) => {
     //const { id } = req.params;
-    const { title, start, end, payment_amount, id, location, notes } = req.body;
+    let { title, start, end, payment_amount, id, location, notes } = req.body;
 
     if (!title || !start || !id) {
         return res.status(400).json({ error: 'Missing required fields' });
