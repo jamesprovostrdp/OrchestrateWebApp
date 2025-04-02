@@ -31,16 +31,19 @@ function App() {
 
   const getEvents = async (userID) => {
 
-    // Get Events from user ID
+    // Get Owned Events from user ID
     const databaseSend = await fetch(`http://localhost:3001/api/event/owned/${userID}`);
 
-    // Parse for events
+    // Parse owned events
     const eventsOwned = await databaseSend.json();
 
+    // Get Joined Events from user ID
     const databaseSendJ = await fetch(`http://localhost:3001/api/event/joined/${userID}`);
 
+    // Parse joined events
     const eventsJoined = await databaseSendJ.json();
 
+    // Combine both events to one array
     const events = eventsOwned.events.concat(eventsJoined.events);
 
     // Set events if results gained
