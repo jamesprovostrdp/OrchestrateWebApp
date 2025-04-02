@@ -68,12 +68,12 @@ function App() {
       // Add new notifications and remove past ones
       setNotifications(prev => {
         const newNotifications = upcomingEvents
-          .map(event => `Reminder: ${event.title} starts soon!`)
+          .map(event => `Reminder: ${event.title.replace('$', '')} starts soon!`)
           .filter(notif => !prev.includes(notif));
   
         const activeNotifications = prev.filter(notif => {
           const eventName = notif.replace('Reminder: ', '').replace(' starts soon!', '');
-          return upcomingEvents.some(event => event.name === eventName && new Date(event.date) > now);
+          return upcomingEvents.some(event => event.title.replace('$', '') === eventName && new Date(event.start) > now);
         });
   
         return [...activeNotifications, ...newNotifications];
