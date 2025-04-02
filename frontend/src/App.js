@@ -30,11 +30,18 @@ function App() {
   const [userObjectID, setUserID] = useState("");
 
   const getEvents = async (userID) => {
+
     // Get Events from user ID
     const databaseSend = await fetch(`http://localhost:3001/api/event/owned/${userID}`);
 
     // Parse for events
-    const { events } = await databaseSend.json();
+    const eventsOwned = await databaseSend.json();
+
+    const databaseSendJ = await fetch(`http://localhost:3001/api/event/joined/${userID}`);
+
+    const eventsJoined = await databaseSendJ.json();
+
+    const events = eventsOwned.events.concat(eventsJoined.events);
 
     // Set events if results gained
     if (databaseSend.status === 200 || databaseSend.status === 404) {
@@ -104,10 +111,18 @@ function App() {
   const handleSaveEvent = async (event) => {
     // Send event to database
     const databaseSend = await fetch(`http://localhost:3001/api/event/create`, {
-
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title: event.title, start: event.start, end: event.start, payment_amount: event.amount, id: userObjectID })
+        body: JSON.stringify(
+          { 
+            title: event.title,
+            start: event.start, 
+            end: event.end, 
+            payment_amount: event.amount,
+            notes: event.notes,
+            location: event.location,
+            id: userObjectID 
+          })
     });
 
 
@@ -126,6 +141,7 @@ function App() {
               return [...prevEvents, event];
             }
           });
+
       getEvents(userObjectID);
       return;
     }
