@@ -12,6 +12,7 @@ import NotificationSystem from './components/NotificationSystem';
 import LoginPage from './components/LoginPage';
 import RegistrationPage from'./components/RegistrationPage';
 
+
 // Used for Stripe implementation
 const stripePromise = loadStripe('pk_test_51R6da3R4C0NESzZKViVuNOnUVPxs3n71XZuijiIuTKCx5wFu7XXeJDKZN2pgrCN94LOMPb3XwkF90SB1aRr91IqH00cGulU19M'); // public key
 
@@ -58,7 +59,7 @@ function App() {
   
       // Filter events happening within the next 15 minutes
       const upcomingEvents = events.filter(event => {
-        const eventTime = new Date(event.date);
+        const eventTime = new Date(event.start);
         const timeDiff = (eventTime - now) / (60 * 1000);
         return timeDiff > 0 && timeDiff <= 15;
       });
@@ -66,7 +67,7 @@ function App() {
       // Add new notifications and remove past ones
       setNotifications(prev => {
         const newNotifications = upcomingEvents
-          .map(event => `Reminder: ${event.name} starts soon!`)
+          .map(event => `Reminder: ${event.title} starts soon!`)
           .filter(notif => !prev.includes(notif));
   
         const activeNotifications = prev.filter(notif => {
@@ -123,6 +124,7 @@ function App() {
             id: userObjectID 
           })
     });
+
 
     // Save event in events if successful
     if (databaseSend.status === 201) {
@@ -224,6 +226,7 @@ function App() {
             onDateClick={handleDateClick}
             onEventClick={handleEventClick}
             events={events}
+            currentUserId={userObjectID}
           />
         </div>
       </div>

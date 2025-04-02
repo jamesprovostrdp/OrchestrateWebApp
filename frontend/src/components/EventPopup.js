@@ -19,7 +19,7 @@ export default function OwnerEventPopup({selectedDate, selectedEvent, onSave, on
     const [amount, setAmount] = useState('');
     const [notes, setNotes] = useState('');
     const [formReady, setFormReady] = useState(false);
-    const [showPaymentForm, setShowPaymentForm] = useState(false);
+
 
 
 
@@ -35,6 +35,7 @@ export default function OwnerEventPopup({selectedDate, selectedEvent, onSave, on
             onSave ({
                 title: displayTitle,
                 start: dateTime,
+                end: endTime,
                 location,
                 paymentRequired,
                 notes,
@@ -128,24 +129,6 @@ export default function OwnerEventPopup({selectedDate, selectedEvent, onSave, on
                             <input type="number" className="form-control" placeholder="$0.00" value={amount}
                             onChange={(e) => setAmount(e.target.value)}
                             />
-
-                                <label className="form-label">Payment Amount</label>
-                                <input
-                                type="number"
-                                className="form-control"
-                                placeholder="$0.00"
-                                value={amount}
-                                onChange={(e) => setAmount(e.target.value)}
-                                />
-
-                                <div className="mt-4">
-                                    <h5>Complete Payment</h5>
-                                    <Elements stripe={stripePromise}>
-                                        <PaymentForm payment={amount} />
-                                    </Elements>
-                                    </div>
-
-
                             </div>
                             )}
                  
@@ -156,12 +139,12 @@ export default function OwnerEventPopup({selectedDate, selectedEvent, onSave, on
                         </div>
                 </form>
 
-                
+                <div style={{width: '90%', margin: '0 auto'}}>
                 <h5>Complete Payment</h5>
-                <Elements stripe={stripePromise}>
+                <Elements stripe={stripePromise} >
                     <PaymentForm/>
                 </Elements>
-
+                </div>
                 </div>
             </div>
     );
