@@ -32,16 +32,19 @@ function App() {
 
   const getEvents = async (userID) => {
 
-    // Get Events from user ID
+    // Get Owned Events from user ID
     const databaseSend = await fetch(`http://localhost:3001/api/event/owned/${userID}`);
 
-    // Parse for events
+    // Parse owned events
     const eventsOwned = await databaseSend.json();
 
+    // Get Joined Events from user ID
     const databaseSendJ = await fetch(`http://localhost:3001/api/event/joined/${userID}`);
 
+    // Parse joined events
     const eventsJoined = await databaseSendJ.json();
 
+    // Combine both events to one array
     const events = eventsOwned.events.concat(eventsJoined.events);
 
     // Set events if results gained
@@ -53,6 +56,32 @@ function App() {
       return;
     }
   }
+
+  	const sendEventToEmail = async (emailAndEvent) => {
+
+		const databaseGetUserID = await fetch(`http://localhost:3001/api/user/info`, {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify(
+			{
+				email: emailAndEvent.email
+			})
+		});
+
+		const collectedUser = await databaseGetUserID.json();
+
+		console.log(emailAndEvent.event);
+		const databaseSend = await fetch(`http://localhost:3001/api/event/join/${collectedUser.id}`, {
+			method: "PUT",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify(
+			{ 
+				event_id: emailAndEvent.event
+			})
+		});
+
+		return;
+	};
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -68,12 +97,12 @@ function App() {
       // Add new notifications and remove past ones
       setNotifications(prev => {
         const newNotifications = upcomingEvents
-          .map(event => `Reminder: ${event.title} starts soon!`)
+          .map(event => `Reminder: ${event.title.replace('$', '')} starts soon!`)
           .filter(notif => !prev.includes(notif));
   
         const activeNotifications = prev.filter(notif => {
           const eventName = notif.replace('Reminder: ', '').replace(' starts soon!', '');
-          return upcomingEvents.some(event => event.name === eventName && new Date(event.date) > now);
+          return upcomingEvents.some(event => event.title.replace('$', '') === eventName && new Date(event.start) > now);
         });
   
         return [...activeNotifications, ...newNotifications];
@@ -110,49 +139,48 @@ function App() {
 
   // Saves a new event to the events state and adds the event to the existing list
   const handleSaveEvent = async (event) => {
-    // Send event to database
-    const databaseSend = await fetch(`http://localhost:3001/api/event/create`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(
-          { 
-            title: event.title,
-            start: event.start, 
-            end: event.end, 
-            payment_amount: event.amount,
-            notes: event.notes,
-            location: event.location,
-            id: userObjectID 
-          })
-    });
 
-    // Save event in events if successful
-    if (databaseSend.status === 201) {
-      
-      // Checks if its updating or not
-          setEvents(prevEvents => {
-            const isEditing = selectedEvent !== null;
+	// Send event to database
+	const databaseSend = await fetch(`http://localhost:3001/api/event/create`, {
+		method: "POST",
+		headers: { "Content-Type": "application/json" },
+		body: JSON.stringify(
+		{ 
+			title: event.title,
+			start: event.start, 
+			end: event.end, 
+			payment_amount: event.amount,
+			notes: event.notes,
+			location: event.location,
+			id: userObjectID
+		})
+	});
 
-            if (isEditing) {
-              return prevEvents.map(ev => 
-                ev.start === selectedEvent.start ? { ...ev, ...event } : ev
-              );
-            } else {
-              return [...prevEvents, event];
-            }
-          });
+	// Save event in events if successful
+	if (databaseSend.status === 201) {
+		setEvents(prevEvents => {
 
-      getEvents(userObjectID);
-      return;
-    }
-    else {
-      return;
-    }
+			if (selectedEvent !== null) {
+				return prevEvents.map(ev => 
+					ev.start === selectedEvent.start ? { ...ev, ...event } : ev
+				);
+			} else {
+				return [...prevEvents, event];
+			}
+		});
+
+		getEvents(userObjectID);
+		return;
+	}
+	else {
+		return;
+	}
   };
 
   // Function to handle clicking on an existing event in the calendar, reload event information when selected
   const handleEventClick = (arg) => {
     const event = arg.event;
+	console.log(event);
     setSelectedEvent({
       title: event.title,
       start: event.startStr,
@@ -160,7 +188,8 @@ function App() {
       location: event.extendedProps.location,
       notes: event.extendedProps.notes,
       paymentRequired: event.extendedProps.payment_required,
-      payment_amount: event.extendedProps.payment_amount
+      payment_amount: event.extendedProps.payment_amount,
+	  id: event.extendedProps._id
     });
     setShowPopup(true);
   };
@@ -239,6 +268,7 @@ function App() {
       {/* Event Popup - Shown when a user clicks on an event */}
       {showPopup && (
         <EventPopup 
+          isDisabled={selectedEvent !==null}
           selectedDate={selectedDate}
           selectedEvent={selectedEvent}
           onSave={handleSaveEvent}
@@ -246,6 +276,7 @@ function App() {
             setShowPopup(false); // Hides the popup
             setSelectedEvent(null); // Clears the selected event
           }}
+		  sendEventToEmail={sendEventToEmail}
           // isReadOnly={selectedEvent !==null}
         />
       )}

@@ -12,7 +12,7 @@ userRouter.post('/login', loginUser);
 // GET: (protected) a protected route that requires authorization for testing
 userRouter.get('/protected', protect, (req, res) => res.send("Welcome to the protected route"));
 
-// GET: Get user information (email and username)
-userRouter.get('/info/:id', getUserInfo);
+// POST: Get user information id from email
+userRouter.post('/info', getUserInfo);
 
 module.exports = userRouter;
