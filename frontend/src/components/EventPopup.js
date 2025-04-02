@@ -78,8 +78,6 @@ export default function OwnerEventPopup({selectedDate, selectedEvent, onSave, on
 
     //   event popup form to create event
     return (
-
-        
         <div className="modal-overlay d-flex align-items-center justify-content-center">
             <div className="modal-content bg-white p-4 rounded shadow">
                 <form onSubmit={handleSubmit} id='eventPopupContent'>
@@ -152,8 +150,6 @@ export default function OwnerEventPopup({selectedDate, selectedEvent, onSave, on
                                 />
                             </div>
                             )}
-
-
                  
                             <div className="mt-4">
                                 <button type="submit" className="btn btn-success me-2">Save</button>
@@ -161,7 +157,10 @@ export default function OwnerEventPopup({selectedDate, selectedEvent, onSave, on
                             </div>
                         </div>
                 </form>
-            
+
+
+
+            {/* Stripe payment form */}
                 {selectedEvent && (
                 <div style={{width: '90%', margin: '0 auto'}}>
                 <h5>Complete Payment</h5>
