@@ -139,14 +139,17 @@ export default function OwnerEventPopup({selectedDate, selectedEvent, onSave, on
                         </div>
                 </form>
 
+                {selectedEvent && (
                 <div style={{width: '90%', margin: '0 auto'}}>
                 <h5>Complete Payment</h5>
                 <Elements stripe={stripePromise} >
                     <PaymentForm/>
                 </Elements>
                 </div>
-                </div>
+                )}
+
             </div>
+        </div>
     );
 }
   
