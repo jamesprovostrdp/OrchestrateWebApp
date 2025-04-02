@@ -268,6 +268,7 @@ function App() {
       {/* Event Popup - Shown when a user clicks on an event */}
       {showPopup && (
         <EventPopup 
+          isDisabled={selectedEvent !==null}
           selectedDate={selectedDate}
           selectedEvent={selectedEvent}
           onSave={handleSaveEvent}
