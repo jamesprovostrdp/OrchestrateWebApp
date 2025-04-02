@@ -30,16 +30,11 @@ const loginUser = async (req, res) => {
     res.status(200).json({ token, userID: user.id.toString() });
 };
 
+// Return user info based on email
 const getUserInfo = async (req, res) => {
-    const { id } = req.params;
+    const { email } = req.body;
 
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-        return res.status(400).json({ error: 'Invalid ID format' });
-    }
-
-    const objectID = mongoose.Types.ObjectId(id);
-
-    const user = await User.findById(objectID);
+    const user = await User.findOne({ email: email });
 
     if (!user) {
         return res.status(400).json({ message: "Unknown User" });
@@ -47,7 +42,8 @@ const getUserInfo = async (req, res) => {
 
     res.status(200).json({
         email: user.email,
-        username: user.username
+        username: user.username,
+        id: user.id
     });
 }
 
