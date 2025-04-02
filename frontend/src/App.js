@@ -109,7 +109,6 @@ function App() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ title: event.title, start: event.start, end: event.start, payment_amount: event.amount, id: userObjectID })
     });
-    setEvents([...events, newEvent]);
 
     // Save event in events if successful
     if (databaseSend.status === 201) {
