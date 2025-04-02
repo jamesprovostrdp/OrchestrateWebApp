@@ -57,6 +57,7 @@ function App() {
     }
   }
 
+  	// Finds user based on email and has them join the given event
   	const sendEventToEmail = async (emailAndEvent) => {
 
 		const databaseGetUserID = await fetch(`http://localhost:3001/api/user/info`, {
@@ -70,7 +71,6 @@ function App() {
 
 		const collectedUser = await databaseGetUserID.json();
 
-		console.log(emailAndEvent.event);
 		const databaseSend = await fetch(`http://localhost:3001/api/event/join/${collectedUser.id}`, {
 			method: "PUT",
 			headers: { "Content-Type": "application/json" },
