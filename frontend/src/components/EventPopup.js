@@ -8,7 +8,7 @@ const stripePromise = loadStripe('pk_test_51R6da3R4C0NESzZKViVuNOnUVPxs3n71XZuij
 
 
 
-export default function OwnerEventPopup({selectedDate, selectedEvent, onSave, onClose, isOwner}){
+export default function OwnerEventPopup({selectedDate, selectedEvent, onSave, onClose, shareBtn}){
 
     // Holds values
     const [name, setName] = useState(selectedEvent?.title?.replace('Event - ', '') || '');
@@ -19,7 +19,8 @@ export default function OwnerEventPopup({selectedDate, selectedEvent, onSave, on
     const [amount, setAmount] = useState('');
     const [notes, setNotes] = useState('');
     const [formReady, setFormReady] = useState(false);
-    const [showPaymentForm, setShowPaymentForm] = useState(false);
+    const [showShare, setShowShare] = useState(false);
+
 
 
 
@@ -35,6 +36,7 @@ export default function OwnerEventPopup({selectedDate, selectedEvent, onSave, on
             onSave ({
                 title: displayTitle,
                 start: dateTime,
+                end: `${selectedDate || selectedEvent.start.split('T')[0]}T${endTime}`,
                 location,
                 paymentRequired,
                 notes,
@@ -47,39 +49,58 @@ export default function OwnerEventPopup({selectedDate, selectedEvent, onSave, on
     // This will populate form if already exists or will clear for new form
     useEffect(() => {
         if (selectedEvent) {
+            console.log("selectedEvent.end:", selectedEvent.end);
+
           setName(selectedEvent.title?.replace('Event - ', '') || '');
           setStartTime(selectedEvent.start?.split('T')[1]?.slice(0, 5) || '');
-          setEndTime(selectedEvent.start?.split('T')[1]?.slice(0, 5) || '');
+          setEndTime(selectedEvent.end?.split('T')[1]?.slice(0, 5) || '');
           setLocation(selectedEvent.location || '');
-          setPaymentRequired(selectedEvent.paymentRequired || false);
           setNotes(selectedEvent.notes || '');
-          setAmount(selectedEvent.amount || '');
+          setAmount(selectedEvent.payment_amount || selectedEvent.amount || '');
+          setPaymentRequired(selectedEvent.paymentRequired || selectedEvent.payment_required || false);
         } else {
           setName('');
           setStartTime('');
           setEndTime('');
           setLocation('');
-          setPaymentRequired(false);
           setNotes('');
           setAmount('');
+          setPaymentRequired(false);
         }
-        setFormReady(true)
+        setFormReady(true);
       }, [selectedEvent]);
+      
     
 
     //   disabled={!isOwner} 
 
+    
+
     //   event popup form to create event
     return (
+
+        
         <div className="modal-overlay d-flex align-items-center justify-content-center">
             <div className="modal-content bg-white p-4 rounded shadow">
                 <form onSubmit={handleSubmit} id='eventPopupContent'>
                     <div className="mb-3">
 
-                    {selectedEvent && (
+                    {selectedEvent && !showShare && (
                     <div className="d-flex justify-content-end mb-3">
-                    <button type="button" className="btn btn-outline-success">Share</button>
+                    <button type="button" className="btn btn-outline-success" id='shareBtn' onClick={() => setShowShare(true)}>Share</button>
                     </div>
+                    )}
+                    {showShare && (
+                        <div style={{width: '90%', margin: '0 auto'}}>
+                            <div>
+                                <label htmlFor="exampleInputEmail1" className="form-label mt-4">Email address</label>
+                                <input type="email" className="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email" fdprocessedid="scyye"/>
+                            </div>
+                            <div className="modal-footer" style={{justifyContent:'center' }}>
+                                <button type="button" className="btn btn-primary mt-3 mb-3 me-2"  fdprocessedid="hv2e44">Send</button>
+                                <button type="button" className="btn btn-secondary mt-3 mb-3 me-2" data-bs-dismiss="modal" fdprocessedid="ctriwb" onClick={() => setShowShare(false)}>Close</button>
+                            </div>
+                        </div>
                     )}
 
                             <label className="form-label">Event Name:</label>
@@ -88,7 +109,7 @@ export default function OwnerEventPopup({selectedDate, selectedEvent, onSave, on
                             onChange={(e) => setName(e.target.value)}
                             />
                             
-
+                         
                             <div className='row'>
                                 <div className='col'>
                             <label className="form-label">Start Time:</label>
@@ -118,36 +139,21 @@ export default function OwnerEventPopup({selectedDate, selectedEvent, onSave, on
                                 ></textarea>
                             
                             <input className="form-check-input" type="checkbox" 
-                            id="flexCheckDefault" checked={paymentRequired} onChange={(e) => setPaymentRequired(e.target.checked)}/>
-                            <label className="form-check-label" htmlfor="flexCheckDefault">Payment Required</label>
-
-                            {paymentRequired && (
-                            <div className="mt-3">
-
-                            <label className="form-label">Payment Amount</label>
-                            <input type="number" className="form-control" placeholder="$0.00" value={amount}
-                            onChange={(e) => setAmount(e.target.value)}
+                            id="flexCheckDefault" checked={paymentRequired}
+                            onChange={(e) => setPaymentRequired(e.target.checked)}
                             />
+                            <label className="form-check-label" htmlFor="flexCheckDefault">Payment Required</label>
 
+                            {(paymentRequired || amount) && (
+                            <div className="mt-3">
                                 <label className="form-label">Payment Amount</label>
-                                <input
-                                type="number"
-                                className="form-control"
-                                placeholder="$0.00"
-                                value={amount}
+                                <input type="number" className="form-control" placeholder="$0.00" value={amount}
                                 onChange={(e) => setAmount(e.target.value)}
                                 />
-
-                                <div className="mt-4">
-                                    <h5>Complete Payment</h5>
-                                    <Elements stripe={stripePromise}>
-                                        <PaymentForm payment={amount} />
-                                    </Elements>
-                                    </div>
-
-
                             </div>
                             )}
+
+
                  
                             <div className="mt-4">
                                 <button type="submit" className="btn btn-success me-2">Save</button>
@@ -155,15 +161,18 @@ export default function OwnerEventPopup({selectedDate, selectedEvent, onSave, on
                             </div>
                         </div>
                 </form>
-
-                
+            
+                {selectedEvent && (
+                <div style={{width: '90%', margin: '0 auto'}}>
                 <h5>Complete Payment</h5>
-                <Elements stripe={stripePromise}>
+                <Elements stripe={stripePromise} >
                     <PaymentForm/>
                 </Elements>
-
                 </div>
+                )}
+
             </div>
+        </div>
     );
 }
   

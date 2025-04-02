@@ -11,7 +11,7 @@ import EventSignup from './components/EventSignup';
 import NotificationSystem from './components/NotificationSystem';
 import LoginPage from './components/LoginPage';
 import RegistrationPage from'./components/RegistrationPage';
-import mongoose from 'mongoose';
+
 
 // Used for Stripe implementation
 const stripePromise = loadStripe('pk_test_51R6da3R4C0NESzZKViVuNOnUVPxs3n71XZuijiIuTKCx5wFu7XXeJDKZN2pgrCN94LOMPb3XwkF90SB1aRr91IqH00cGulU19M'); // public key
@@ -29,12 +29,20 @@ function App() {
   const [register, setRegister] = useState(false);
   const [userObjectID, setUserID] = useState("");
 
+
   const getEvents = async (userID) => {
+
     // Get Events from user ID
     const databaseSend = await fetch(`http://localhost:3001/api/event/owned/${userID}`);
 
     // Parse for events
-    const { events } = await databaseSend.json();
+    const eventsOwned = await databaseSend.json();
+
+    const databaseSendJ = await fetch(`http://localhost:3001/api/event/joined/${userID}`);
+
+    const eventsJoined = await databaseSendJ.json();
+
+    const events = eventsOwned.events.concat(eventsJoined.events);
 
     // Set events if results gained
     if (databaseSend.status === 200 || databaseSend.status === 404) {
@@ -52,7 +60,7 @@ function App() {
   
       // Filter events happening within the next 15 minutes
       const upcomingEvents = events.filter(event => {
-        const eventTime = new Date(event.date);
+        const eventTime = new Date(event.start);
         const timeDiff = (eventTime - now) / (60 * 1000);
         return timeDiff > 0 && timeDiff <= 15;
       });
@@ -60,7 +68,7 @@ function App() {
       // Add new notifications and remove past ones
       setNotifications(prev => {
         const newNotifications = upcomingEvents
-          .map(event => `Reminder: ${event.name} starts soon!`)
+          .map(event => `Reminder: ${event.title} starts soon!`)
           .filter(notif => !prev.includes(notif));
   
         const activeNotifications = prev.filter(notif => {
@@ -104,10 +112,18 @@ function App() {
   const handleSaveEvent = async (event) => {
     // Send event to database
     const databaseSend = await fetch(`http://localhost:3001/api/event/create`, {
-
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title: event.title, start: event.start, end: event.start, payment_amount: event.amount, id: userObjectID })
+        body: JSON.stringify(
+          { 
+            title: event.title,
+            start: event.start, 
+            end: event.end, 
+            payment_amount: event.amount,
+            notes: event.notes,
+            location: event.location,
+            id: userObjectID 
+          })
     });
 
     // Save event in events if successful
@@ -125,6 +141,7 @@ function App() {
               return [...prevEvents, event];
             }
           });
+
       getEvents(userObjectID);
       return;
     }
@@ -139,13 +156,15 @@ function App() {
     setSelectedEvent({
       title: event.title,
       start: event.startStr,
+      end: event.endStr, 
       location: event.extendedProps.location,
-      paymentRequired: event.extendedProps.paymentRequired,
       notes: event.extendedProps.notes,
-      amount: event.extendedProps.amount
+      paymentRequired: event.extendedProps.payment_required,
+      payment_amount: event.extendedProps.payment_amount
     });
-    setShowPopup(true); // Shows the event popup with the event details
+    setShowPopup(true);
   };
+  
 
   return (
     <div className="App">
@@ -209,21 +228,25 @@ function App() {
             onDateClick={handleDateClick}
             onEventClick={handleEventClick}
             events={events}
+            currentUserId={userObjectID}
           />
         </div>
       </div>
 
+
+
+
       {/* Event Popup - Shown when a user clicks on an event */}
       {showPopup && (
-        <EventPopup
+        <EventPopup 
           selectedDate={selectedDate}
           selectedEvent={selectedEvent}
           onSave={handleSaveEvent}
-          // isOwner={userIsOwner}
           onClose={() => {
             setShowPopup(false); // Hides the popup
             setSelectedEvent(null); // Clears the selected event
           }}
+          // isReadOnly={selectedEvent !==null}
         />
       )}
     </div>

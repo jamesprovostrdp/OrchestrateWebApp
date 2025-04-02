@@ -1,7 +1,7 @@
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
-const { default: mongoose } = require('mongoose');
+const { default: mongoose, mongo } = require('mongoose');
 
 const registerUser = async (req, res) => {
     const { email, password, username } = req.body;
@@ -37,7 +37,9 @@ const getUserInfo = async (req, res) => {
         return res.status(400).json({ error: 'Invalid ID format' });
     }
 
-    const user = await User.findById(id);
+    const objectID = mongoose.Types.ObjectId(id);
+
+    const user = await User.findById(objectID);
 
     if (!user) {
         return res.status(400).json({ message: "Unknown User" });
