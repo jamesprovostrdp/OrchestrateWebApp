@@ -240,6 +240,7 @@ function App() {
       {/* Event Popup - Shown when a user clicks on an event */}
       {showPopup && (
         <EventPopup 
+          isDisabled={selectedEvent !==null}
           selectedDate={selectedDate}
           selectedEvent={selectedEvent}
           onSave={handleSaveEvent}
@@ -247,7 +248,7 @@ function App() {
             setShowPopup(false); // Hides the popup
             setSelectedEvent(null); // Clears the selected event
           }}
-          // isReadOnly={selectedEvent !==null}
+          
         />
       )}
     </div>
