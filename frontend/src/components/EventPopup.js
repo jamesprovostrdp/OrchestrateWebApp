@@ -104,7 +104,7 @@ export default function OwnerEventPopup({selectedDate, selectedEvent, onSave, on
                     )}
 
                             <label className="form-label">Event Name:</label>
-                            <input disabled={isDisabled} type="text" className="form-control"
+                            <input required alert disabled={isDisabled} type="text" className="form-control"
                             placeholder="Enter name of event" value={name}
                             onChange={(e) => setName(e.target.value)}
                             />
@@ -113,14 +113,14 @@ export default function OwnerEventPopup({selectedDate, selectedEvent, onSave, on
                             <div className='row'>
                                 <div className='col'>
                             <label className="form-label">Start Time:</label>
-                            <input disabled={isDisabled} type="time" className="form-control mb-3" value={startTime}
+                            <input required disabled={isDisabled} type="time" className="form-control mb-3" value={startTime}
                             onChange={(e) => setStartTime(e.target.value)}
                             />
                             </div>
 
                             <div className='col'>
                             <label className="form-label">End Time:</label>
-                            <input disabled={isDisabled} type="time" className="form-control mb-3" value={endTime}
+                            <input required disabled={isDisabled} type="time" className="form-control mb-3" value={endTime}
                             onChange={(e) => setEndTime(e.target.value)}
                             />
                             </div>
@@ -129,7 +129,7 @@ export default function OwnerEventPopup({selectedDate, selectedEvent, onSave, on
 
                             <label className="form-label">Location:</label>
                             <input disabled={isDisabled} type="text" className="form-control"
-                            placeholder="Enter location or Address" value={location}
+                                value={location}
                             onChange={(e) => setLocation(e.target.value)}
                             />
 
