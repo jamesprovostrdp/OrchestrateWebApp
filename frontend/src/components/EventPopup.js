@@ -8,7 +8,7 @@ const stripePromise = loadStripe('pk_test_51R6da3R4C0NESzZKViVuNOnUVPxs3n71XZuij
 
 
 
-export default function OwnerEventPopup({selectedDate, selectedEvent, onSave, onClose, isOwner}){
+export default function OwnerEventPopup({selectedDate, selectedEvent, onSave, onClose, shareBtn}){
 
     // Holds values
     const [name, setName] = useState(selectedEvent?.title?.replace('Event - ', '') || '');
@@ -19,6 +19,7 @@ export default function OwnerEventPopup({selectedDate, selectedEvent, onSave, on
     const [amount, setAmount] = useState('');
     const [notes, setNotes] = useState('');
     const [formReady, setFormReady] = useState(false);
+    const [showShare, setShowShare] = useState(false);
 
 
 
@@ -73,17 +74,33 @@ export default function OwnerEventPopup({selectedDate, selectedEvent, onSave, on
 
     //   disabled={!isOwner} 
 
+    
+
     //   event popup form to create event
     return (
+
+        
         <div className="modal-overlay d-flex align-items-center justify-content-center">
             <div className="modal-content bg-white p-4 rounded shadow">
                 <form onSubmit={handleSubmit} id='eventPopupContent'>
                     <div className="mb-3">
 
-                    {selectedEvent && (
+                    {selectedEvent && !showShare && (
                     <div className="d-flex justify-content-end mb-3">
-                    <button type="button" className="btn btn-outline-success">Share</button>
+                    <button type="button" className="btn btn-outline-success" id='shareBtn' onClick={() => setShowShare(true)}>Share</button>
                     </div>
+                    )}
+                    {showShare && (
+                        <div style={{width: '90%', margin: '0 auto'}}>
+                            <div>
+                                <label htmlFor="exampleInputEmail1" className="form-label mt-4">Email address</label>
+                                <input type="email" className="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email" fdprocessedid="scyye"/>
+                            </div>
+                            <div className="modal-footer" style={{justifyContent:'center' }}>
+                                <button type="button" className="btn btn-primary mt-3 mb-3 me-2"  fdprocessedid="hv2e44">Send</button>
+                                <button type="button" className="btn btn-secondary mt-3 mb-3 me-2" data-bs-dismiss="modal" fdprocessedid="ctriwb" onClick={() => setShowShare(false)}>Close</button>
+                            </div>
+                        </div>
                     )}
 
                             <label className="form-label">Event Name:</label>
@@ -92,7 +109,7 @@ export default function OwnerEventPopup({selectedDate, selectedEvent, onSave, on
                             onChange={(e) => setName(e.target.value)}
                             />
                             
-
+                         
                             <div className='row'>
                                 <div className='col'>
                             <label className="form-label">Start Time:</label>
@@ -144,7 +161,7 @@ export default function OwnerEventPopup({selectedDate, selectedEvent, onSave, on
                             </div>
                         </div>
                 </form>
-
+            
                 {selectedEvent && (
                 <div style={{width: '90%', margin: '0 auto'}}>
                 <h5>Complete Payment</h5>
