@@ -126,7 +126,6 @@ function App() {
           })
     });
 
-
     // Save event in events if successful
     if (databaseSend.status === 201) {
       
