@@ -133,7 +133,7 @@ const joinEventByID = async (req, res) => {
 
 
     if (!mongoose.Types.ObjectId.isValid(id) || !mongoose.Types.ObjectId.isValid(event_id)) {
-        return res.status(400).json({ error: 'Invalid ID format' });
+        return res.status(400).json({ error: 'Invalid ID format', info: { userID: id, eventID: event_id } });
     }
 
     try {
@@ -147,6 +147,54 @@ const joinEventByID = async (req, res) => {
         return res.status(200).json(event);
     } catch (err) {
         return res.status(500).json({ message: 'Error joining event', err, info: { userID: id, eventID: event_id } });
+    }
+};
+
+// Update an event
+const updateEvent = async (req, res) => {
+    //const { id } = req.params;
+    let { title, start, end, payment_amount, event_id, location, notes } = req.body;
+
+    if (!title || !start || !id) {
+        return res.status(400).json({ error: 'Missing required fields' });
+    }
+
+    if (!payment_amount) {
+        payment_amount = "0.00";
+    }
+    if (!location) {
+        location = "";
+    }
+    if (!notes) {
+        notes = "";
+    }
+    if (!end) {
+        end = start;
+    }
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(400).json({ error: 'Invalid ID format' });
+    }
+
+    try {
+
+        const updatedEvent = await Event.updateOne(
+            { _id: event_id },
+            {
+                title: title,
+                start: start,
+                end: end,
+                location: location,
+                notes: notes,
+                payment_amount: payment_amount
+            }
+        );
+
+        if (!update) return res.status(404).json({ message: "Event not updated."});
+        
+        return res.status(201).json(updatedEvent);
+    } catch (err) {
+        return res.status(500).json({ message: 'Error updating event', err });
     }
 };
 
