@@ -41,6 +41,9 @@ const PaymentForm = ({payment}) => {
         body: JSON.stringify({ amount: payment, paymentMethodId: paymentMethod.id }), // Example: $10.00 in cents (1000)
       });
 
+      // Debugging to verify the payment is made
+      console.log("Payment amount being sent:", payment);
+
       // Parse the JSON response from the server
       const { clientSecret } = await response.json();
 
