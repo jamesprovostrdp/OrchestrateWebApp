@@ -2,7 +2,6 @@ import React, { useState } from 'react'; // Import React
 import { useStripe, useElements, CardElement } from '@stripe/react-stripe-js'; // Import Stripe payment
 import '../css/PaymentForm.css';  // Import the form CSS file
 
-
 const PaymentForm = ({payment}) => {
   // Get Stripe and Elements instances
   const stripe = useStripe();
@@ -11,7 +10,6 @@ const PaymentForm = ({payment}) => {
   const [error, setError] = useState(null);
   // React useState for handling success messages
   const [message, setMessage] = useState('');
-
 
   // Handles form submission
   const handleSubmit = async (event) => {
@@ -80,8 +78,4 @@ const PaymentForm = ({payment}) => {
   );
 };
 
-
-
 export default PaymentForm; // Exports the component to be used throughout the application
-
-

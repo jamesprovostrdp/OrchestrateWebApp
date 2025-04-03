@@ -1,11 +1,12 @@
 import React, {useState} from 'react';
 
 export default function OwnerEventPopup({selectedDate, selectedEvent, onSave, onClose}){
-
+    // Stores event name, time, and location into use states
     const [name, setName] = useState(selectedEvent?.title?.replace('Event - ', '') || '');
     const [time, setTime] = useState(selectedEvent?.start?.split('T')[1]?.slice(0, 5) || '');
     const [location, setLocation] = useState('');
 
+    // Handles submission of an event and stores the name and start date to be displayed on calendar
     const handleSubmit = (e) => {
         e.preventDefault();
         const dateTime = `${selectedDate || selectedEvent.start.split('T')[0]}T${time}`;
@@ -18,6 +19,7 @@ export default function OwnerEventPopup({selectedDate, selectedEvent, onSave, on
         }
     }
 
+    // Creates the popup event form for the owner of the event
     return (
         <div className="modal-overlay d-flex align-items-center justify-content-center">
         <div className="modal-content bg-white p-4 rounded shadow">
