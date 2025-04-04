@@ -60,14 +60,14 @@ function App() {
   	// Finds user based on email and has them join the given event
   	const sendEventToEmail = async (emailAndEvent) => {
 
-		// Collect user ID via their email with the info api endpoint
-		const databaseGetUserID = await fetch(`http://localhost:3001/api/user/info`, {
-			method: "POST",
-			headers: { "Content-Type": "application/json" },
-			body: JSON.stringify(
-			{
-				email: emailAndEvent.email
-			})
+      // Collect user ID via their email with the info api endpoint
+      const databaseGetUserID = await fetch(`http://localhost:3001/api/user/info`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(
+        {
+          email: emailAndEvent.email
+        })
 		});
 
 		// Collect the response
