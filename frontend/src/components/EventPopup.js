@@ -90,7 +90,10 @@ export default function OwnerEventPopup({selectedDate, selectedEvent, onSave, on
                         <div style={{width: '90%', margin: '0 auto', backgroundColor:'#609b8a', padding:'5px', color:'black', borderRadius: '20px' }}>
                             <div>
                                 <label htmlFor="exampleInputEmail1" className="form-label mt-4">Email address</label>
-                                <input type="email" className="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email" fdprocessedid="scyye"/>
+                                <input type="email" className="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email"
+                                value={shareEmail}
+                                onChange={(e) => setShareEmail(e.target.value)}
+                                 />
                             </div>
                             <div className="modal-footer" style={{justifyContent:'center' }}>
                                 <button type="button" className="btn btn-primary mt-3 mb-3 me-2" onClick={() => sendEventToEmail({email: shareEmail, event: eventID})}>Send</button>
