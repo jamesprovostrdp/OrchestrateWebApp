@@ -12,7 +12,6 @@ import NotificationSystem from './components/NotificationSystem';
 import LoginPage from './components/LoginPage';
 import RegistrationPage from'./components/RegistrationPage';
 
-
 // Used for Stripe implementation
 const stripePromise = loadStripe('pk_test_51R6da3R4C0NESzZKViVuNOnUVPxs3n71XZuijiIuTKCx5wFu7XXeJDKZN2pgrCN94LOMPb3XwkF90SB1aRr91IqH00cGulU19M'); // public key
 
@@ -105,6 +104,7 @@ function App() {
           .map(event => `Reminder: ${event.title.replace('$', '')} starts soon!`)
           .filter(notif => !prev.includes(notif));
   
+        // filters through the active events and returns a notification message when they are starting soon
         const activeNotifications = prev.filter(notif => {
           const eventName = notif.replace('Reminder: ', '').replace(' starts soon!', '');
           return upcomingEvents.some(event => event.title.replace('$', '') === eventName && new Date(event.start) > now);
@@ -113,12 +113,12 @@ function App() {
         return [...activeNotifications, ...newNotifications];
       });
   
-    }, 10 * 1000);
+    }, 10 * 1000); // Refreshes the check for new upcoming notifications every 10 seconds
   
     return () => clearInterval(interval);
   }, [events]); // Runs whenever `events` change
 
-  // Directs users to login page if they are not yet logedin or else calendar view
+  // Directs users to login page if they are not yet logedin or else go to calendar view
   if (!loggedIn) {
     if (register) {
       return <RegistrationPage onBackToLogin={() => setRegister(false)} onLogin={() => setLoggedIn(false)} />;
@@ -145,7 +145,7 @@ function App() {
   // Saves a new event to the events state and adds the event to the existing list
   const handleSaveEvent = async (event) => {
 
-	// Send event to database
+	// Send event to database in the form of a JSON
 	const databaseSend = await fetch(`http://localhost:3001/api/event/create`, {
 		method: "POST",
 		headers: { "Content-Type": "application/json" },
@@ -177,9 +177,9 @@ function App() {
 		getEvents(userObjectID);
 		return;
 	}
-	else {
-		return;
-	}
+  else {
+    return;
+  }
   };
 
   // Function to handle clicking on an existing event in the calendar, reload event information when selected
@@ -199,7 +199,6 @@ function App() {
     setShowPopup(true);
   };
   
-
   return (
     <div className="App">
       {/* Start of Nav bar */}
@@ -266,9 +265,6 @@ function App() {
           />
         </div>
       </div>
-
-
-
 
       {/* Event Popup - Shown when a user clicks on an event */}
       {showPopup && (

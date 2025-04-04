@@ -2,7 +2,6 @@ import React, { useState } from 'react'; // Import React
 import { useStripe, useElements, CardElement } from '@stripe/react-stripe-js'; // Import Stripe payment
 import '../css/PaymentForm.css';  // Import the form CSS file
 
-
 const PaymentForm = ({payment}) => {
   // Get Stripe and Elements instances
   const stripe = useStripe();
@@ -11,7 +10,6 @@ const PaymentForm = ({payment}) => {
   const [error, setError] = useState(null);
   // React useState for handling success messages
   const [message, setMessage] = useState('');
-
 
   // Handles form submission
   const handleSubmit = async (event) => {
@@ -40,6 +38,9 @@ const PaymentForm = ({payment}) => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ amount: payment, paymentMethodId: paymentMethod.id }), // Example: $10.00 in cents (1000)
       });
+
+      // Debugging to verify the payment is made
+      console.log("Payment amount being sent:", payment);
 
       // Parse the JSON response from the server
       const { clientSecret } = await response.json();
@@ -77,8 +78,4 @@ const PaymentForm = ({payment}) => {
   );
 };
 
-
-
 export default PaymentForm; // Exports the component to be used throughout the application
-
-
